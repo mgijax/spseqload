@@ -1,3 +1,9 @@
+DATE: 05/07/2004
+STAFF: sc
+CHANGES:
+1) index.html - added logs and reports
+2) SPSeqloader.java - clarified some logging output
+
 TAG: spseqload-1-0-4
 DATE: 04/27/2004
 STAFF: sc

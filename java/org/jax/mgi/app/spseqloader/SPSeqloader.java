@@ -299,28 +299,18 @@ public class SPSeqloader {
     /**
      * what this method does ...
      * @assumes Nothing
-     * @effects Nothing
+     * @effects
      * @param None
-     * @return
-     * @throws ConfigException if problem creating MergeSplitProcessor or
-     *          IncremSeqProcessor
-     * @throws CacheExeption if problem creating MergeSplitProcessor or
-     *         IncremSeqProcessor
-     * @throws DBException if problem creating MergeSplitProcessor or
-     *         IncremSeqProcessor
-     * @throws KeyNotFoundException calling MergeSplitProcessor
-     * @throws MSException if problem creating IncremSeqProcessor
-     * @throws IOUException calling SequenceInput iterator.next()
-     * @throws TranslationException - not really thrown because translators are
-     *         set to return null instead of raising an exception
-     * @throws If error creating writer for or writing to repeatSequenceWriter
+     * @return Nothing
+     * @throws DBException if problem closing rdrStream or mgdStream
+     * @throws IOUException if problems calling SequenceInput iterator.next()
+     * @throws ScriptException if error writing to or executing the
+     *          mergeSplitScriptWriter
+     * @throws SeqloaderException if error closing the repeate sequence writer
      */
 
-    private void load() throws ConfigException, CacheException, DBException,
-        KeyNotFoundException, IOUException, DLALoggingException,
-        MSException, TranslationException, ScriptException,
+    private void load() throws DBException, IOUException, ScriptException,
         SeqloaderException {
-        // DEBUG stuff
 
         // Timing the load
         Stopwatch loadStopWatch = new Stopwatch();
@@ -349,7 +339,9 @@ public class SPSeqloader {
         // could just call the delete method - because if it is not delete/reload mode it
         // it won't do anything
         if (loadMode.equals(SeqloaderConstants.DELETE_RELOAD_MODE)) {
+            logger.logdInfo("Deleting sequences", true);
             seqProcessor.deleteSequences();
+            logger.logdInfo("Done deleting Sequences", true);
         }
 
         // get the next record
@@ -371,47 +363,64 @@ public class SPSeqloader {
             try {
                 seqProcessor.processInput(si);
             }
-            // if we've found a repeated sequence in the input, go to the next
-            // sequence in the input
+            // log repeat sequence, go to next sequence
             catch (RepeatSequenceException e) {
-                logger.logdInfo(e.getMessage() + " Sequence: " +
-                                si.getPrimaryAcc().getAccID(), true);
-                continue;
-            }
-            catch (ChangedOrganismException e) {
-                logger.logdInfo(e.getMessage() + " Sequence: " +
-                                si.getPrimaryAcc().getAccID(), true);
+                String message = e.getMessage() + " Sequence: " +
+                    si.getPrimaryAcc().getAccID();
+                logger.logdInfo(message, true);
+                logger.logcInfo(message, true);
+
                 errCtr++;
                 continue;
             }
+            // log changed organism, go to next sequence
+            catch (ChangedOrganismException e) {
+                String message = e.getMessage() + " Sequence: " +
+                    si.getPrimaryAcc().getAccID();
+                logger.logdInfo(message, true);
+                logger.logcInfo(message, true);
 
+                errCtr++;
+                continue;
+            }
+            // log changed library, go to next sequence
             catch (ChangedLibraryException e) {
-                logger.logdInfo(e.getMessage() + " Sequence: " +
-                                si.getPrimaryAcc().getAccID(), true);
+                String message = e.getMessage() + " Sequence: " +
+                    si.getPrimaryAcc().getAccID();
+                logger.logdInfo(message, true);
+                logger.logcInfo(message, true);
+
                 errCtr++;
                 continue;
             }
             // if we can't resolve SEQ_Sequence attributes, go to the next
-            // sequence in the input
+            // sequence
             catch (SequenceResolverException e) {
-                logger.logdErr(e.getMessage() + " Sequence: " +
-                               si.getPrimaryAcc().getAccID());
+                String message = e.getMessage() + " Sequence: " +
+                    si.getPrimaryAcc().getAccID();
+                logger.logdInfo(message, true);
+                logger.logcInfo(message, true);
+
                 errCtr++;
                 continue;
             }
             // if we can't resolve the source for a sequence, go to the next
-            // sequence in the input
+            // sequence
             catch (MSException e) {
-                logger.logdErr(e.getMessage() + " Sequence: " +
-                               si.getPrimaryAcc().getAccID());
+                String message = e.getMessage() + " Sequence: " +
+                    si.getPrimaryAcc().getAccID();
+                logger.logdInfo(message, true);
+                logger.logcInfo(message, true);
+
                 errCtr++;
                 continue;
             }
 
             //DEBUG
+            //currentFreeMemory = runTime.freeMemory();
+            //runningFreeMemory = runningFreeMemory + currentFreeMemory;
+
             seqCtr = passedCtr + errCtr;
-            currentFreeMemory = runTime.freeMemory();
-            runningFreeMemory = runningFreeMemory + currentFreeMemory;
             if (seqCtr > 0 && seqCtr % 1000 == 0) {
                 logger.logdInfo("Processed " + seqCtr + " input records", false);
                 //System.gc();
@@ -457,23 +466,33 @@ public class SPSeqloader {
         logger.logdInfo("Closing rdrStream", false);
         rdrStream.close();
 
-        // report Sequence processing statistics
+        /**
+        * report Sequence processing statistics
+        */
+
         logger.logdInfo("Total SPSeqloader.load() time in minutes: " +
+                        (totalProcessTime/60), true);
+        logger.logpInfo("Total SPSeqloader.load() time in minutes: " +
                         (totalProcessTime/60), true);
 
         seqCtr = passedCtr + errCtr;
-        logger.logdInfo("Total Sequence Processed = " + seqCtr + " (" + errCtr +
+        logger.logdInfo("Total Sequences Processed = " + seqCtr + " (" + errCtr +
                         " skipped because of errors or repeated sequences)", false);
-        logger.logdInfo("Average Processing Time/Sequence = " +
+        logger.logpInfo("Total Sequence Processed = " + seqCtr + " (" + errCtr +
+                        " skipped because of errors or repeated sequences)", false);
+
+        logger.logdDebug("Average Processing Time/Sequence = " +
                         (totalProcessTime / seqCtr), false);
+
         if (seqCtr > 0) {
-          logger.logdInfo("Average SequenceLookup time = " +
+          logger.logdDebug("Average SequenceLookup time = " +
                           (seqProcessor.runningLookupTime / seqCtr), false);
 
           logger.logdDebug("Greatest SequenceLookup time = " +
                            seqProcessor.highLookupTime, false);
           logger.logdDebug("Least SequenceLookup time = " +
                            seqProcessor.lowLookupTime, false);
+
           // report MSProcessor execution times
           logger.logdDebug("Average MSProcessor time = " +
                            (seqProcessor.runningMSPTime / seqCtr), false);
@@ -483,10 +502,14 @@ public class SPSeqloader {
           // report free memory average
           logger.logdDebug("Average Free Memory = " + (runningFreeMemory / seqCtr), false);
         }
-        logger.logdInfo("Organism Decider Counts:", true);
+        logger.logdInfo("Organism Decider Counts:", false);
+        logger.logpInfo("Organism Decider Counts:", false);
+
         Vector deciderCts = organismChecker.getDeciderCounts();
         for (Iterator i = deciderCts.iterator(); i.hasNext(); ) {
-            logger.logdInfo( (String) i.next(), false);
+            String line = (String) i.next();
+            logger.logdInfo( line, false);
+            logger.logpInfo( line, false);
         }
 
         // report Event counts for sequences processed - Note that all
@@ -499,87 +522,10 @@ public class SPSeqloader {
 
         Vector eventReports = seqProcessor.getProcessedReport();
         for(Iterator i = eventReports.iterator(); i.hasNext();) {
-              logger.logdInfo((String)i.next(), false);
+              String line = (String)i.next();
+              logger.logpInfo(line, false);
+              logger.logdInfo(line, false);
         }
     }
 }
 // $Log
-/*
-        loadStopWatch.stop();
-        double totalLoadTime = loadStopWatch.time();
-
-        // report total time for EMBLSeqloader.load()
-        logger.logdInfo("Total EMBLSeqloader.load() time in minutes: " + (totalLoadTime/60), true);
-
-        // report Sequence Lookup execution times
-        seqCtr = passedCtr + errCtr;
-        logger.logdInfo("Total Sequence Processed = " + seqCtr + " (" + errCtr + " had errors)", false);
-        logger.logdInfo("Average Processing Time/Sequence = " + (totalLoadTime / seqCtr), false);
-        if (seqCtr > 0) {
-          logger.logdInfo("Average SequenceLookup time = " +
-                          (seqProcessor.runningLookupTime / seqCtr), false);
-
-          logger.logdDebug("Greatest SequenceLookup time = " +
-                           seqProcessor.highLookupTime, false);
-          logger.logdDebug("Least SequenceLookup time = " +
-                           seqProcessor.lowLookupTime, false);
-          // report MSProcessor execution times
-          logger.logdDebug("Average MSProcessor time = " +
-                           (seqProcessor.runningMSPTime / seqCtr), false);
-          logger.logdDebug("Greatest MSProcessor time = " +
-                           seqProcessor.highMSPTime, false);
-          logger.logdDebug("Least MSProcessor time = " + seqProcessor.lowMSPTime, false);
-          // report free memory average
-          logger.logdDebug("Average Free Memory = " + (runningFreeMemory / seqCtr), false);
-          logger.logdInfo("Organism Decider Counts:", true);
-        }
-        Vector deciderCts = organismChecker.getDeciderCounts();
-          for (Iterator i = deciderCts.iterator(); i.hasNext(); ) {
-            logger.logdInfo( (String) i.next(), true);
-          }
-
-        // processes inserts, deletes and updates to mgd
-        logger.logdInfo("Closing mgdStream", false);
-        mgdStream.close();
-
-        if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
-          //  process merges and splits - note: all adds and updates must
-          // already be processed (mgdstream must already be closed).
-          logger.logdInfo("Processing Merge/Splits", true);
-          mergeSplitProcessor.process(mergeSplitScriptWriter);
-          mergeSplitScriptWriter.execute();
-          logger.logdInfo("Finished processing Merge/Splits", true);
-
-          // close the repeat sequence writer
-          try {
-            repeatSeqWriter.close();
-          }
-          catch (IOException e) {
-            SeqloaderException e1 =
-                (SeqloaderException) eFactory.getException(
-                SeqloaderExceptionFactory.RepeatFileIOException, e);
-            throw e1;
-          }
-        }
-
-        // Close rdrStream after all qc reporting has been done - Note that
-        // mergeSplitProcessor does qc reporting
-        logger.logdInfo("Closing rdrStream", false);
-        rdrStream.close();
-
-        // report Event counts for sequences processed - Note that all
-        // Merge and Split events are also other events. e.g. if two sequences
-        // are merged into one new sequence than there will be an add
-        // event and two merge events. If a sequence is merged into an existing
-        // sequence then there will be an update event and one merge event.
-        // if a sequence is split into two new sequences then there will be two
-        // add events and one split event.
-
-        Vector eventReports = seqProcessor.getProcessedReport();
-        for(Iterator i = eventReports.iterator(); i.hasNext();) {
-              logger.logdInfo((String)i.next(), false);
-        }
-    }
-}
-// $Log
-*/

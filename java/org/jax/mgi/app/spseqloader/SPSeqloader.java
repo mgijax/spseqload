@@ -6,7 +6,7 @@ package org.jax.mgi.app.spseqloader;
 import org.jax.mgi.shr.timing.Stopwatch;
 import org.jax.mgi.shr.dla.seqloader.EMBLOrganismChecker;
 import org.jax.mgi.shr.dla.seqloader.SeqLoader;
-import org.jax.mgi.shr.dla.seqloader.EMBLInputFile;
+import org.jax.mgi.shr.dla.embl.EMBLInputFileNoSeq;
 import org.jax.mgi.shr.exception.MGIException;
 import java.util.Vector;
 import java.util.Iterator;
@@ -61,12 +61,12 @@ public class SPSeqloader extends SeqLoader {
         // set oc in the superclass for reporting purposes
         super.organismChecker = oc;
 
-        // Create an EMBLInputFile with a SPSequenceInterpreter
-        SPSequenceInterpreter interp = new SPSequenceInterpreter(oc);
-        EMBLInputFile inData = new EMBLInputFile(interp);
+        // Create an EMBLInputFile
+        //SPSequenceInterpreter interp = new SPSequenceInterpreter(oc);
+        EMBLInputFileNoSeq inData = new EMBLInputFileNoSeq();
 
-        // get an iterator for the EMBLInputFile
-        super.iterator = inData.getIterator();
+        // get an iterator for the EMBLInputFile with a SwissProt interpreter
+        super.iterator = inData.getIterator(new SPSequenceInterpreter(oc));
     }
 
    protected void appPostProcess() throws MGIException {

@@ -1,3 +1,10 @@
+TAG: spseqload-1-0-2
+DATE: 04/13/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: 
+1) spseqload.config.defaults  - changed path of RADARDBUTILSDIR
+
 TAG: spseqload-1-0-1
 TAG: spseqload-1-0-0
 DATE: 04/09/2004

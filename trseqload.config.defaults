@@ -11,15 +11,15 @@
 FILEDIR=/data/loads/swissprot/trseqload
 #FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
 
-# Input file directory - used with PIPED_INFILES to process adhoc input
-DATADIR=/data/downloads/grendel.jax.org/sptrnrdb
-#DATADIR=/net/hobbiton/data/downloads/grendel.jax.org/sptrnrdb
+# Input file directory - used with APP_INFILES to process adhoc input
+INPUTDIR=/data/downloads/grendel.jax.org/sptrnrdb
+#INPUTDIR=/net/hobbiton/data/downloads/grendel.jax.org/sptrnrdb
 
 # list of files to pipe to application if not using radar
-PIPED_INFILES=
+APP_INFILES=
 
 # true if get input files from RADAR
-RADAR_INPUT=true
+APP_RADAR_INPUT=true
 
 # TrEMBL sequence quality
 SEQ_QUALITY=Medium
@@ -33,6 +33,6 @@ SEQ_PROVIDER=TrEMBL
 # logical db name for TrEMBL
 SEQ_LOGICALDB=TrEMBL
 
-export FILEDIR DATADIR PIPED_INFILES RADAR_INPUT SEQ_QUALITY
+export FILEDIR INPUTDIR APP_INFILES APP_RADAR_INPUT SEQ_QUALITY
 export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
 

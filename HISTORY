@@ -1,18 +1,26 @@
+TAG: spseqload-1-0-11
+DATE: 7/9/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: TR5916, TR5986
+1) spseqload.config.defaults trseqload.config.defaults -  added MAIL_LOADNAME
+2) spseqload.sh - removed call to mailLog - handled by postload now
+
 TAG: spseqload-1-0-10
 DATE: 06/30/2004
 STAFF: sc
-RELEASE: prod
-CHANGES:
-1) gbseqload.config.defaults - reversed prefixing for update and mergeSplit
+RELEASE: dev
+CHANGES: TR5916, TR5986
+1) sp_common.config.defaults - reversed prefixing for update and mergeSplit
    SCP vars. DLALoader looks for unprefixed vars to create the update script.
    Added DLA_DB_PREFIX=MGD even though this is the default value - just to make
    it clear
-2) GBSeqloader.java - change GBInputFile import as in new package. Changed
-   how the GBInputfile gets the interpreter.
+2) SPSeqloader.java - change EMBLInputFile import as in new package. Changed
+   how the EMBLInputfile gets the interpreter.
 
 DATE: 06/29/2004
 STAFF: sc
-CHANGES:
+CHANGES: TR5916, TR5986
 1) Install - removed
 2) README.Install - added to explain how to use DLAInstall
 3) sp_common.config.defaults - added OUTPUTDIR,

@@ -1,3 +1,11 @@
+TAG: spseqload-3-1-0-2
+DATE: -1/25/2005
+STAFF: sc
+RELEASE: prod
+CHANGES: TR6473
+1) spseqload.sh - added date echo before each call to qc reports
+2) sp_common.config.default - added SEQ_QUERY_BATCHSIZE
+
 TAG: spseqload-3-1-0-1
 DATE: 12/08/2004
 STAFF: sc

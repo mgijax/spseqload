@@ -55,11 +55,11 @@ export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
 # RADAR Connection parameters 
 RADAR_DBSERVER=DEV1_MGI
 RADAR_DBURL=rohan.informatics.jax.org:4101
-RADAR_DBNAME=radar_release
+RADAR_DBNAME=radar_jsam
 RADAR_DBUSER=mgd_dbo
 RADAR_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
 #RADAR_DBSCHEMADIR=/home/sc/jsam/radardbschema
-RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_release/radardbschema
+RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_jsam/radardbschema
 
 export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER 
 export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 

@@ -99,6 +99,7 @@ DLA_START=org.jax.mgi.shr.dla.DLAStart
 
 # SQL STREAM
 # this overrides the default BCP_Inline_Stream
+DLA_DB_PREFIX=MGD
 DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
 
 # seqloader QC report script
@@ -222,18 +223,19 @@ export RADAR_BCP_OK_TO_OVERWRITE
 
 ###########################################################################
 #
-#  SQL SCRIPTWRITER SETTINGS FOR updates
+#  SQL SCRIPTWRITER SETTINGS FOR merges and splits
 #
 ###########################################################################
 
-# setting used to create a ScriptWriter for the MGD database
+# setting used to create a ScriptWriter for the merges and split
 MGD_SCP_PATH=${MGD_BCP_PATH}
-MGD_SCP_PREVENT_EXECUTE=false
-MGD_SCP_OK_TO_OVERWRITE=true
-MGD_SCP_FILENAME=updates
+MGD_SCP_PREVENT_EXECUTE=true
+MGD_SCP_OK_TO_OVERWRITE=false
+
+MGD_SCP_FILENAME=mergeSplits
 
 #MGD_SCP_SUFFIX=
-MGD_SCP_OUTFILENAME=updates
+MGD_SCP_OUTFILENAME=mergeSplits
 #MGD_SCP_OUTSUFFIX=
 
 export MGD_SCP_PATH MGD_SCP_PREVENT_EXECUTE MGD_SCP_OK_TO_OVERWRITE
@@ -241,23 +243,23 @@ export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
 
 ###########################################################################
 #
-#  SQL SCRIPTWRITER SETTINGS FOR Merges and Splits
+#  SQL SCRIPTWRITER SETTINGS FOR updates
 #
 ###########################################################################
 
-# setting used to create a ScriptWriter for the merges and split
+# setting used to create a ScriptWriter to do MGD database updates
 SCP_PATH=${MGD_BCP_PATH}
-SCP_PREVENT_EXECUTE=false
-SCP_OK_TO_OVERWRITE=true
-SCP_FILENAME=mergeSplits
+SCP_PREVENT_EXECUTE=true
+SCP_OK_TO_OVERWRITE=false
+
+SCP_FILENAME=updates
 
 #SCP_SUFFIX=
-SCP_OUTFILENAME=mergeSplits
+SCP_OUTFILENAME=updates
 #SCP_OUTSUFFIX=
 
 export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
 export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
-
 
 ###########################################################################
 #

@@ -11,9 +11,9 @@
 FILEDIR=/data/loads/swissprot/trseqload
 #FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
 
-# Input file directory
-DATADIR=/data/downloads/us.expasy.ch/sptrnrdb
-#DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
+# Input file directory - used with PIPED_INFILES to process adhoc input
+DATADIR=/data/downloads/grendel.jax.org/sptrnrdb
+#DATADIR=/net/hobbiton/data/downloads/grendel.jax.org/sptrnrdb
 
 # list of files to pipe to application if not using radar
 PIPED_INFILES=

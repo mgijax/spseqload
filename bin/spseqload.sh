@@ -9,7 +9,7 @@
 #  Purpose:  This script controls the execution of the SwissProt
 #		and TrEMBL Sequence Loads
 #
-   Usage=spseqload.sh config_file
+   Usage="spseqload.sh config_file"
 #      e.g. spseqload.sh trseqload.config
 #
 #  Env Vars:

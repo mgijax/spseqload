@@ -1,0 +1,33 @@
+#format: sh
+#
+#  trseqload.config.defaults
+#
+#  This file sets up environment variables that are needed for 
+#  processing TrEMBL sequences
+#
+###########################################################################
+
+# this dir holds the following dirs: logs, data, archive, reports
+FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
+
+# Input file directory
+DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
+
+# list of files to pipe to application
+PIPED_INFILES="${DATADIR}/uniprot_trembl.dat.gz ${DATADIR}/new/uniprot_trembl_new.dat.gz"
+
+# TrEMBL sequence quality
+SEQ_QUALITY=Medium
+
+# this load's login value for DB table CreatedBy and ModifiedBy
+JOBSTREAM=trembl_seqload
+
+# SEQ_Sequence Provider controlled vocab for TrEMBL
+SEQ_PROVIDER=TrEMBL
+
+# logical db name for TrEMBL
+SEQ_LOGICALDB=TrEMBL
+
+export FILEDIR DATADIR PIPED_INFILES SEQ_QUALITY
+export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
+

@@ -57,6 +57,10 @@ import org.jax.mgi.dbs.mgd.lookup.TranslationException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.dbutils.DBException;
+import org.jax.mgi.dbs.mgd.lookup.AccessionLookup;
+import org.jax.mgi.dbs.mgd.lookup.LogicalDBLookup;
+import org.jax.mgi.dbs.mgd.MGITypeConstants;
+import org.jax.mgi.dbs.mgd.AccessionLib;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -222,7 +226,7 @@ public class SPSeqloader {
          */
         // Create a SQLDataManager for the MGD database from the factory.
         mgdSqlMgr = SQLDataManagerFactory.getShared(SchemaConstants.MGD);
-        mgdSqlMgr.setLogger(logger);
+        //mgdSqlMgr.setLogger(logger);
 
         // Create a bcp manager that has been configured for the MGD database.
         mgdBcpMgr = new BCPManager(new BCPManagerCfg("MGD"));
@@ -266,7 +270,15 @@ public class SPSeqloader {
         }
         // create a seq processor for incremental loads
         else if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
-            mergeSplitProcessor = new MergeSplitProcessor(qcReporter);
+            LogicalDBLookup lookup = new LogicalDBLookup();
+
+            AccessionLookup seqIdLookup = new AccessionLookup(lookup.lookup(
+                loadCfg.getLogicalDB()).intValue(),
+                MGITypeConstants.SEQUENCE,
+                AccessionLib.PREFERRED);
+
+            mergeSplitProcessor = new MergeSplitProcessor(seqIdLookup, qcReporter);
+
             // Note: here I want to use the default prefixing, so normally
             // wouldn't need to pass a Configurator, but the ScriptWriter(sqlMgr)
             // is a protected constructor
@@ -291,7 +303,8 @@ public class SPSeqloader {
                 qcReporter,
                 seqResolver,
                 mergeSplitProcessor,
-                repeatSeqWriter);
+                repeatSeqWriter,
+                seqIdLookup);
         }
     }
 
@@ -314,6 +327,8 @@ public class SPSeqloader {
         // Timing the load
         Stopwatch loadStopWatch = new Stopwatch();
         loadStopWatch.start();
+        // timer around just sequence process
+        Stopwatch processSequenceWatch = new Stopwatch();
 
         // For memory usage
         Runtime runTime = Runtime.getRuntime();
@@ -360,7 +375,11 @@ public class SPSeqloader {
                 continue;
             }
             try {
+                processSequenceWatch.reset();
+                processSequenceWatch.start();
                 seqProcessor.processInput(si);
+                processSequenceWatch.stop();
+                logger.logdDebug("Processed sequence " + si.getPrimaryAcc().getAccID() + " in " + processSequenceWatch.time() + " seconds");
             }
             // log repeat sequence, go to next sequence
             catch (RepeatSequenceException e) {

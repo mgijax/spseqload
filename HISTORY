@@ -1,3 +1,20 @@
+TAG: spseqload-1-0-13
+DATE: 10/22/2004
+STAFF: sc
+RELEASE: dev
+CHANGES:TR5395
+1) spseqload.sh - added param to preload to archive outputdir
+    - added call to cleanDir to clean outputdir and rptdir
+2) sp_common.config.default - changed BCP_Script_Stream to BCP_Stream
+
+
+DATE: 10/12/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: TR5395
+1) SPSeqLoader - changed name of method getRecordDataIterator() to
+   getDataIterator()
+
 TAG: spseqload-1-0-12
 DATE: 7/14/2004
 STAFF: sc

@@ -1,0 +1,217 @@
+#!/bin/sh
+#
+# Install
+#
+# 1. cp spseqload.config.defaults spseqload.config
+# 2. edit as necessary
+# 3. run this script
+#    usage: Install
+###########################################################################
+
+echo "Installation Started: `date`"
+
+#
+#  Function called for a completed installation.
+#
+install_completed ()
+{
+    echo "Installation Completed: `date`"
+    exit 0
+}
+
+#
+#  Function called for a failed installation.
+#
+install_failed ()
+{
+    echo "Installation Failed: `date`"
+    exit 1
+}
+
+#
+#  Set up environment variables required by the install.
+#
+INDEXFILE=index.html
+
+#
+#  Establish the configuration file names.
+#
+CONFIG_COMMON=common.config.sh
+CONFIG_GBLOAD=spseqload.config
+
+#
+#  Make sure the common configuration file exists, set up a symbolic link
+#  to it and run it.
+#
+CONFIG_PATH=/usr/local/mgi/etc/${CONFIG_COMMON}
+if [ -f ${CONFIG_PATH} ]
+then
+    rm -f ${CONFIG_COMMON}
+    ln -s ${CONFIG_PATH} ${CONFIG_COMMON}
+    if [ -r ${CONFIG_COMMON} ]
+    then
+        . ${CONFIG_COMMON}
+    else
+        echo "Cannot read configuration file: ${CONFIG_COMMON}"
+        install_failed
+    fi
+else
+    echo "Configuration file does not exists: ${CONFIG_PATH}"
+    install_failed
+fi
+
+#
+#  Run the spseqload configuration file.
+#
+if [ -r ${CONFIG_GBLOAD} ]
+then
+    . ${CONFIG_GBLOAD}
+else
+    echo "Cannot read configuration file: ${CONFIG_GBLOAD}"
+    install_failed
+fi
+
+#
+#  Verify that the ant utility has been defined.
+#
+if [ "${ANT}" = "" ]
+then
+    echo "Environment variable ANT has not been defined."
+    echo "It should be set to path of the executable for the ant utility."
+    install_failed
+fi
+
+#
+#  Verify that the FILE directory has been defined.
+#
+if [ "${FILEDIR}" = "" ]
+then
+    echo "Environment variable FILEDIR has not been defined."
+    echo "It should be set to the directory where the archive, data,"
+    echo "logs and reports directories are created."
+    install_failed
+fi
+
+#
+#  Verify that the ARCHIVE directory has been defined.
+#
+if [ "${ARCHIVEDIR}" = "" ]
+then
+    echo "Environment variable ARCHIVEDIR has not been defined."
+    echo "It should be set to the directory where archive files are created."
+    install_failed
+fi
+
+#
+#  Verify that the DATA (input file )directory has been defined.
+#
+if [ "${DATADIR}" = "" ]
+then
+    echo "Environment variable DATADIR has not been defined."
+    echo "It should be set to the directory where input files reside and"
+    echo "bcp files are created."
+    install_failed
+fi
+
+#
+#  Verify that the MGD_BCP_PATH (bcp and script output file )
+#  directory has been defined.
+#
+if [ "${MGD_BCP_PATH}" = "" ]
+then
+    echo "Environment variable MGD_BCP_PATH has not been defined."
+    echo "It should be set to the directory where input files reside and"
+    echo "bcp files are created."
+    install_failed
+fi
+
+#
+#  Verify that the LOGS directory has been defined.
+#
+if [ "${LOGDIR}" = "" ]
+then
+    echo "Environment variable LOGDIR has not been defined."
+    echo "It should be set to the directory where log files are created."
+    install_failed
+fi
+
+#
+#  Verify that the REPORTS directory has been defined.
+#
+if [ "${RPTDIR}" = "" ]
+then
+    echo "Environment variable RPTDIR has not been defined."
+    echo "It should be set to the directory where report files are created."
+    install_failed
+fi
+
+#
+#  Make the required directories if they don't already exist.
+#
+for i in ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
+do
+    if [ ! -d ${i} ]
+    then
+        mkdir -p ${i} >/dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            echo "Directory created: ${i}"
+        else
+            echo "Cannot create directory: ${i}"
+            install_failed
+        fi
+    else
+        echo "Directory already exists: ${i}"
+    fi
+done
+
+#
+#  Set permissions on installed directories and files.
+#
+echo "Set permissions on installed directories and files"
+chmod -f 755 ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
+chmod -f 750 bin system_docs
+chmod -f 640 spseqload.config* build.xml
+chmod -f 644 ${INDEXFILE}
+find bin -name "*.sh" -exec chmod -f 750 {} \;
+find java -type d -exec chmod -f 750 {} \;
+find java -name "*.java" -exec chmod -f 640 {} \;
+find system_docs -type f -exec chmod -f 640 {} \;
+
+#
+#  Copy the HTML index file to the FILE directory.
+#
+if [ -f ${INDEXFILE} ]
+then
+    echo "Copy ${INDEXFILE} to ${FILEDIR}"
+    cp -p ${INDEXFILE} ${FILEDIR}
+else
+    echo "Missing HTML index file: ${INDEXFILE}"
+    install_failed
+fi
+
+#
+#  Compile the source code, create a jar file and generate javadocs.
+#
+if [ -x ${ANT} ]
+then
+    echo "Compile the source code, create a jar file and generate javadocs"
+    ${ANT} all
+else
+    echo "Cannot execute ant utility: ${ANT}"
+    install_failed
+fi
+
+#
+#  Set permissions on generated directories and files.
+#
+echo "Set permissions on generated directories and files"
+chmod -fR 750 classes
+chmod -fR 755 javadocs
+chmod -f 750 *.jar
+find classes -type d -exec chmod -f 750 {} \;
+find classes -name "*.class" -exec chmod -f 640 {} \;
+find javadocs -type d -exec chmod -f 755 {} \;
+find javadocs -type f -exec chmod -f 644 {} \;
+
+install_completed

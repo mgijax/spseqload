@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE definitions [
+  <!ENTITY build.targets SYSTEM "/usr/local/mgi/etc/build.app.targets.xml">
+]>
+
+<!-- Enter the name of your current project here
+ -->
+<project name="spseqload" default="compile" basedir=".">
+
+  <!-- Enter the name of your current project here
+   -->
+  <property name="proj.name" value="spseqload"/>
+
+  <!-- To override property definitions in the following
+       properties file, add new definitions in preceding lines.
+       The first definition of a property takes precedence
+   -->
+  <property file="/usr/local/mgi/etc/build.app.properties"/>
+
+  <!-- Universal targets get included here
+   -->
+  &build.targets;
+
+</project>
+

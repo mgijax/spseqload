@@ -1,5 +1,7 @@
-DATE: 06/29/2004
+TAG: spseqload-1-0-10
+DATE: 06/30/2004
 STAFF: sc
+RELEASE: prod
 CHANGES:
 1) gbseqload.config.defaults - reversed prefixing for update and mergeSplit
    SCP vars. DLALoader looks for unprefixed vars to create the update script.
@@ -8,7 +10,7 @@ CHANGES:
 2) GBSeqloader.java - change GBInputFile import as in new package. Changed
    how the GBInputfile gets the interpreter.
 
-DATE: 06/28/2004
+DATE: 06/29/2004
 STAFF: sc
 CHANGES:
 1) Install - removed

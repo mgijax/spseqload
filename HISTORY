@@ -1,3 +1,10 @@
+TAG: spseqload-tr6392-1
+DATE: 12/07/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: TR6392
+1) spseqload.sh - added SEQ_PROVIDER as parameter to logProcessedFiles.csh
+
 TAG: spseqload-1-0-12
 DATE: 7/14/2004
 STAFF: sc

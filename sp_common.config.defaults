@@ -244,13 +244,12 @@ MGD_SCP_PREVENT_EXECUTE=false
 MGD_SCP_OK_TO_OVERWRITE=false
 MGD_SCP_FILENAME=updates
 
-# Use defaults
 #MGD_SCP_SUFFIX=
-#MGD_SCP_OUTFILENAME=
+MGD_SCP_OUTFILENAME=updates
 #MGD_SCP_OUTSUFFIX=
 
 export MGD_SCP_PATH MGD_SCP_PREVENT_EXECUTE MGD_SCP_OK_TO_OVERWRITE
-#export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
+export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
 
 ###########################################################################
 #
@@ -264,13 +263,12 @@ SCP_PREVENT_EXECUTE=false
 SCP_OK_TO_OVERWRITE=false
 SCP_FILENAME=mergeSplits
 
-# Use defaults
 #SCP_SUFFIX=
-#SCP_OUTFILENAME=
+SCP_OUTFILENAME=mergeSplits
 #SCP_OUTSUFFIX=
 
 export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
-#export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
+export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 
 
 ###########################################################################
@@ -280,7 +278,7 @@ export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
 ###########################################################################
 
 #  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_PROC="sc"
+MAIL_LOG_PROC="sc,lec"
 MAIL_LOG_CUR=""
 
 

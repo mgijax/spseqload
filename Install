@@ -2,9 +2,11 @@
 #
 # Install
 #
-# 1. cp spseqload.config.defaults spseqload.config
-# 2. edit as necessary
-# 3. run this script
+# 1. cp sp_common.config.defaults sp_common.config
+# 2. cp trseqload.config.defaults trseqload.config
+# 3. cp spseqload.config.defaults spseqload.config
+# 4. edit above three config files as needed
+# 5. run this script
 #    usage: Install
 ###########################################################################
 

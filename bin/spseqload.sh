@@ -208,15 +208,15 @@ then
 	echo "No files to process" | tee -a ${LOG_DIAG}
     shutDown
     exit 0
+    fi
 fi
 
-fi
 # if input file from Configuration check that PIPED_INFILES has been defined
 if [ "${PIPED_INFILES}" = "" ]
 then
-    echo "RADAR_INPUT=false. Check that PIPED_INFILES has been configured" | tee -a ${LOG_DIAG}
-    # set STAT for endJobStream.py called from postload in shutDown
+     # set STAT for endJobStream.py called from postload in shutDown
     STAT=1
+    echo "RADAR_INPUT=false. Check that PIPED_INFILES has been configured. Return status: ${STAT}" | tee -a ${LOG_DIAG}
     shutDown
     exit 0
 fi

@@ -1,3 +1,9 @@
+DATE: 06/14/2004
+STAFF: sc
+CHANGES:
+1) sp_common.config.defaults - configured script outputfile names
+   configured Lori to receive the process log
+
 TAG: spseqload-1-0-9
 TAG: spseqload-1-0-8
 DATE: 06/08/2004

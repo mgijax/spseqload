@@ -118,7 +118,7 @@ export FILEDIR DATADIR LOGDIR RPTDIR ARCHIVEDIR
 INFILE_NAME=STDIN
 
 # list of files to pipe to application
-PIPED_INFILES=${DATADIR}/sprot.dat.gz
+PIPED_INFILES=${DATADIR}/uniprot_sprot.dat.gz
 
 # method to cat files to stdin, generally 'cat' or 'gunzip -c'
 CAT_METHOD="/usr/local/bin/gunzip -c"
@@ -168,7 +168,7 @@ SEQ_VIRTUAL=true
 SEQ_QUALITY=High
 
 # this load's login value for DB table CreatedBy and ModifiedBy
-JOBSTREAM=swissprot_load
+JOBSTREAM=swissprot_seqload
 
 # SEQ_Sequence Provider controlled vocab for SwissProt 
 SEQ_PROVIDER=SWISS-PROT
@@ -236,7 +236,7 @@ export RADAR_BCP_OK_TO_OVERWRITE
 
 # setting used to create a ScriptWriter for the MGD database
 MGD_SCP_PATH=${MGD_BCP_PATH}
-MGD_SCP_PREVENT_EXECUTE=true
+MGD_SCP_PREVENT_EXECUTE=false
 MGD_SCP_OK_TO_OVERWRITE=false
 
 # Use default = script

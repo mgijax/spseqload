@@ -3,7 +3,8 @@ STAFF: sc
 CHANGES:
 1) index.html - added correct path to QC_MS_UnresolvedOrganism.rpt
 2) sp_common.config.defaults, spseqload.config.defaults, 
-   trseqload.config.defaults - updated for the release
+   trseqload.config.defaults - updated for the release, turned radar bcp auto
+   flush on
 
 DATE: 05/07/2004
 STAFF: sc

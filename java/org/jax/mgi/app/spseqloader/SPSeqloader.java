@@ -370,7 +370,6 @@ public class SPSeqloader {
                 logger.logdInfo(message, true);
                 logger.logcInfo(message, true);
 
-                errCtr++;
                 continue;
             }
             // log changed organism, go to next sequence
@@ -477,9 +476,9 @@ public class SPSeqloader {
 
         seqCtr = passedCtr + errCtr;
         logger.logdInfo("Total Sequences Processed = " + seqCtr + " (" + errCtr +
-                        " skipped because of errors or repeated sequences)", false);
+                        " skipped because of errors - see QC reports and diagnostic log)", false);
         logger.logpInfo("Total Sequence Processed = " + seqCtr + " (" + errCtr +
-                        " skipped because of errors or repeated sequences)", false);
+                        " skipped because of errors - see QC reports and diagnostic log)", false);
 
         logger.logdDebug("Average Processing Time/Sequence = " +
                         (totalProcessTime / seqCtr), false);

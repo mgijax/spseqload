@@ -16,14 +16,12 @@
 ###########################################################################
 
 #  Installation directory for the SwissProt sequence load
-INSTALLDIR=/usr/local/mgi/live/dataload/spseqload
-#INSTALLDIR=/usr/local/mgi/3.0/dataload/spseqload
+INSTALLDIR=${USRLOCALMGI}/dataload/spseqload
 
 #  Installation directory for the QC report product
-APP_QCRPTDIR=/usr/local/mgi/live/qcreports_db
-#APP_QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
+APP_QCRPTDIR=${QCRPTDIR}
 
-export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR APP_QCRPTDIR
+export INSTALLDIR APP_QCRPTDIR
 
 ###########################################################################
 #
@@ -39,13 +37,12 @@ MGD_DBURL=shire.informatics.jax.org:4100
 #MGD_DBURL=rohan.informatics.jax.org:4101
 
 MGD_DBNAME=mgd
-#MGD_DBNAME=mgd_jsamlec
+#MGD_DBNAME=mgd_sc
 
 MGD_DBUSER=mgd_dbo
-MGD_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
+MGD_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
 
-MGD_DBSCHEMADIR=/usr/local/mgi/live/dbutils/mgd/mgddbschema
-#MGD_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/mgd_jsamlec/mgddbschema
+MGD_DBSCHEMADIR=${MGDDBSCHEMADIR}
 
 export MGD_DBSERVER MGD_DBURL MGD_DBNAME
 export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
@@ -59,13 +56,12 @@ RADAR_DBURL=shire.informatics.jax.org:4100
 #RADAR_DBURL=rohan.informatics.jax.org:4101
 
 RADAR_DBNAME=radar
-#RADAR_DBNAME=radar_jsam
+#RADAR_DBNAME=radar_release
 
 RADAR_DBUSER=mgd_dbo
-RADAR_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
+RADAR_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
 
-RADAR_DBSCHEMADIR=/usr/local/mgi/live/dbutils/radar/radardbschema
-#RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_jsam/radardbschema
+RADAR_DBSCHEMADIR=${RADARDBSCHEMADIR}
 
 export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER 
 export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
@@ -79,11 +75,11 @@ export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR
 # allow 2G initial and max heap memory
 JAVARUNTIMEOPTS="-Xms2G -Xmx2G"    
 
-JAVA_LIB=/usr/local/mgi/live/lib/java1.4/lib_java_dla/dla.jar:/usr/local/mgi/live/lib/java1.4/lib_java_core/core.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsmgd/dbsmgd.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsrdr/dbsrdr.jar
+JAVA_LIB=${JAVAPATH}/lib_java_dla/dla.jar:${JAVAPATH}/lib_java_core/core.jar:${JAVAPATH}/lib_java_dbsmgd/dbsmgd.jar:${JAVAPATH}/lib_java_dbsrdr/dbsrdr.jar
 
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
-export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH
+export JAVARUNTIMEOPTS CLASSPATH
 
 ###########################################################################
 #
@@ -117,12 +113,11 @@ ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
 export LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
 
-#  Complete path name of the SwissProt input file(s)
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
 #  the application. 
 INFILE_NAME=STDIN
 
-# method to cat files to stdin, generally 'cat' or 'gunzip -c'
+# how files are piped to the application
 APP_CAT_METHOD="/usr/local/bin/gunzip -c"
 
 # true = regex matching for finding record delim is turned on

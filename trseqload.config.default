@@ -9,14 +9,12 @@
 
 # this dir holds the following dirs: logs, data, archive, reports
 FILEDIR=/data/loads/swissprot/trseqload
-#FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
 
 # Input file directory - used with APP_INFILES to process adhoc input
-INPUTDIR=/data/downloads/grendel.jax.org/sptrnrdb
-#INPUTDIR=/net/hobbiton/data/downloads/grendel.jax.org/sptrnrdb
+INPUTDIR=/data/downloads/grendel.jax.org/sptrnrdb/trembl
 
-# list of files to pipe to application if not using radar
-APP_INFILES=
+# list of files to pipe to application when APP_RADAR_INPUT=false
+APP_INFILES=${INPUTDIR}/uniprot_trembl.dat.gz
 
 # true if get input files from RADAR
 APP_RADAR_INPUT=true

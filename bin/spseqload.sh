@@ -147,10 +147,6 @@ shutDown ()
     #
     postload
 
-    #
-    #  Mail the logs to the support staff.
-    #
-    mailLog "SWISS-PROT Load" | tee -a ${LOG}
 }
 
 #

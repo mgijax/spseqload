@@ -81,8 +81,6 @@ JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 
 JAVA_LIB=/usr/local/mgi/live/lib/java1.4/lib_java_dla/dla.jar:/usr/local/mgi/live/lib/java1.4/lib_java_core/core.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsmgd/dbsmgd.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsrdr/dbsrdr.jar
 
-#JAVA_LIB=/usr/local/mgi/3.0/lib/java1.4/lib_java_dla/dla.jar:/usr/local/mgi/3.0/lib/java1.4/lib_java_core/core.jar:/usr/local/mgi/3.0/lib/java1.4/lib_java_dbsmgd/dbsmgd.jar:/usr/local/mgi/3.0/lib/java1.4/lib_java_dbsrdr/dbsrdr.jar
-
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
 export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH

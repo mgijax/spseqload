@@ -19,19 +19,11 @@
 INSTALLDIR=/usr/local/mgi/live/dataload/spseqload
 #INSTALLDIR=/usr/local/mgi/3.0/dataload/spseqload
 
-#  Installation directory for the mgi DB utilities product
-DBUTILSDIR=/usr/local/mgi/live/dbutils/mgidbutilities
-#DBUTILSDIR=/usr/local/mgi/3.0/dbutils/mgidbutilities
-
-# Installation directory for the radar dbutilites product
-RADARDBUTILSDIR=/usr/local/mgi/live/dbutils/radardbutilities
-#RADARDBUTILSDIR=/usr/local/mgi/3.0/dbutils/radardbutilities
- 
 #  Installation directory for the QC report product
-QCRPTDIR=/usr/local/mgi/live/qcreports_db
-#QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
+APP_QCRPTDIR=/usr/local/mgi/live/qcreports_db
+#APP_QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
 
-export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR QCRPTDIR
+export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR APP_QCRPTDIR
 
 ###########################################################################
 #
@@ -84,9 +76,6 @@ export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR
 #
 ###########################################################################
 
-JAVA_HOME=/usr/j2se
-JAVA_RUN=${JAVA_HOME}/bin/java
-
 # allow 2G initial and max heap memory
 JAVARUNTIMEOPTS="-Xms2G -Xmx2G"    
 
@@ -96,14 +85,7 @@ JAVA_LIB=/usr/local/mgi/live/lib/java1.4/lib_java_dla/dla.jar:/usr/local/mgi/liv
 
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
-export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH DLAFUNCTIONS
-
-DLAFUNCTIONS=${RADARDBUTILSDIR}/bin/DLAfunctions.sh
-
-JOBSTART_CSH=${RADARDBUTILSDIR}/bin/startJobStream.csh
-JOBEND_CSH=${RADARDBUTILSDIR}/bin/endJobStream.csh
-
-export JOBSTART_CSH JOBEND_CSH
+export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH
 
 ###########################################################################
 #
@@ -112,27 +94,28 @@ export JOBSTART_CSH JOBEND_CSH
 ###########################################################################
 
 #  Java applications
-SPSEQLOAD_APP=org.jax.mgi.app.spseqloader.SPSeqloader
+DLA_LOADER=org.jax.mgi.app.spseqloader.SPSeqloader
+DLA_START=org.jax.mgi.shr.dla.DLAStart
+
+# SQL STREAM
+# this overrides the default BCP_Inline_Stream
+DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
 
 # seqloader QC report script
-SEQLOAD_QCRPT=${QCRPTDIR}/seqload/runQC.csh
+APP_SEQ_QCRPT=${APP_QCRPTDIR}/seqload/runQC.csh
 
 # molecular source processor QC report script
-MSP_QCRPT=${QCRPTDIR}/msp/runQC.csh
+APP_MSP_QCRPT=${APP_QCRPTDIR}/msp/runQC.csh
 
-export SPSEQLOAD_APP SEQLOAD_QCRPT MSP_QCRPT
+export DLA_LOADER DLA_START DLA_LOAD_STREAM
+export APP_SEQ_QCRPT APP_MSP_QCRPT
 
-#  loader shell script
-SPSEQLOAD_SH=${INSTALLDIR}/bin/spseqload.sh
-
-export SPSEQLOAD_SH
-
-#  Path name of the data, report, log and archive directories
+#  Path name of the output, report, log and archive directories
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
 ARCHIVEDIR=${FILEDIR}/archive
-
-export LOGDIR RPTDIR ARCHIVEDIR
+OUTPUTDIR=${FILEDIR}/output
+export LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
 
 #  Complete path name of the SwissProt input file(s)
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
@@ -140,7 +123,7 @@ export LOGDIR RPTDIR ARCHIVEDIR
 INFILE_NAME=STDIN
 
 # method to cat files to stdin, generally 'cat' or 'gunzip -c'
-CAT_METHOD="/usr/local/bin/gunzip -c"
+APP_CAT_METHOD="/usr/local/bin/gunzip -c"
 
 # true = regex matching for finding record delim is turned on
 INFILE_USE_REGEX=true
@@ -168,10 +151,10 @@ MS_OK_TO_SEARCH_ASSOC_CLONES=false
 
 # path to repeat file; file spseqload writes sequences found more than
 # once in the input
-SEQ_REPEAT_FILE=${FILEDIR}/data/repeats.out
+SEQ_REPEAT_FILE=${OUTPUTDIR}/repeats.out
 
 export INFILE_NAME INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER 
-export INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE 
+export APP_CAT_METHOD INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE 
 export MS_OK_TO_SEARCH_ASSOC_CLONES SEQ_REPEAT_FILE
 
 # SEQ_Sequence sequence type controlled vocab for protein
@@ -180,13 +163,15 @@ SEQ_TYPE=Polypeptide
 # true if a virtual (computationally derived) sequence
 SEQ_VIRTUAL=true
 
-# organisms to load
-LOAD_MOUSE=true
-LOAD_RAT=false
-LOAD_HUMAN=false
 
-export SEQ_TYPE SEQ_VIRTUAL 
-export LOAD_MOUSE LOAD_RAT LOAD_HUMAN 
+export SEQ_TYPE SEQ_VIRTUAL
+
+# organisms to load
+SEQ_LOAD_MOUSE=true
+SEQ_LOAD_RAT=false
+SEQ_LOAD_HUMAN=false
+
+export SEQ_LOAD_MOUSE SEQ_LOAD_RAT SEQ_LOAD_HUMAN
 
 #  Complete path name of the log files
 LOG_PROC=${LOGDIR}/spseqload.proc.log
@@ -197,7 +182,10 @@ LOG_VAL=${LOGDIR}/spseqload.val.log
 # Send debug messages to the diagnostic log
 LOG_DEBUG=false
 
-export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG
+# logger factory class - allows classes to get their own loggers
+LOG_FACTORY=org.jax.mgi.shr.dla.DLALoggerFactory
+
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG LOG_FACTORY
 
 
 ###########################################################################
@@ -207,7 +195,7 @@ export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG
 ###########################################################################
 
 #  Settings used to create a BCP manager for the MGD database
-MGD_BCP_PATH=${FILEDIR}/data
+MGD_BCP_PATH=${OUTPUTDIR}
 MGD_BCP_PREVENT_EXECUTE=false
 MGD_BCP_TRUNCATE_LOG=true
 MGD_BCP_DROP_INDEXES=false
@@ -220,7 +208,7 @@ export MGD_BCP_DROP_INDEXES MGD_BCP_RECORD_STAMPING MGD_BCP_AUTO_FLUSH
 export MGD_BCP_OK_TO_OVERWRITE
 
 #  Settings used to create a BCP manager for the MGD database
-RADAR_BCP_PATH=${FILEDIR}/data
+RADAR_BCP_PATH=${OUTPUTDIR}
 RADAR_BCP_PREVENT_EXECUTE=false
 RADAR_BCP_TRUNCATE_LOG=true
 RADAR_BCP_DROP_INDEXES=false
@@ -241,7 +229,7 @@ export RADAR_BCP_OK_TO_OVERWRITE
 # setting used to create a ScriptWriter for the MGD database
 MGD_SCP_PATH=${MGD_BCP_PATH}
 MGD_SCP_PREVENT_EXECUTE=false
-MGD_SCP_OK_TO_OVERWRITE=false
+MGD_SCP_OK_TO_OVERWRITE=true
 MGD_SCP_FILENAME=updates
 
 #MGD_SCP_SUFFIX=
@@ -260,7 +248,7 @@ export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
 # setting used to create a ScriptWriter for the merges and split
 SCP_PATH=${MGD_BCP_PATH}
 SCP_PREVENT_EXECUTE=false
-SCP_OK_TO_OVERWRITE=false
+SCP_OK_TO_OVERWRITE=true
 SCP_FILENAME=mergeSplits
 
 #SCP_SUFFIX=
@@ -279,6 +267,4 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 
 #  Recipient list for mailing the log files (comma-separated)
 MAIL_LOG_PROC="sc,lec"
-MAIL_LOG_CUR=""
-
-
+MAIL_LOG_CUR="sc"

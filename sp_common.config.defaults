@@ -1,6 +1,6 @@
 #format: sh
 #
-#  spseqload.config.defaults
+#  sp_common.config.defaults
 #
 #  This file sets up environment variables that are needed for the
 #  SwissProt Sequence load

@@ -15,8 +15,11 @@ FILEDIR=/data/loads/swissprot/trseqload
 DATADIR=/data/downloads/us.expasy.ch/sptrnrdb
 #DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
 
-# list of files to pipe to application
-PIPED_INFILES="${DATADIR}/uniprot_trembl.dat.gz ${DATADIR}/new/uniprot_trembl_new.dat.gz"
+# list of files to pipe to application if not using radar
+PIPED_INFILES=
+
+# true if get input files from RADAR
+RADAR_INPUT=true
 
 # TrEMBL sequence quality
 SEQ_QUALITY=Medium
@@ -30,6 +33,6 @@ SEQ_PROVIDER=TrEMBL
 # logical db name for TrEMBL
 SEQ_LOGICALDB=TrEMBL
 
-export FILEDIR DATADIR PIPED_INFILES SEQ_QUALITY
+export FILEDIR DATADIR PIPED_INFILES RADAR_INPUT SEQ_QUALITY
 export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
 

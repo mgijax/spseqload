@@ -15,8 +15,9 @@ FILEDIR=/data/loads/swissprot/spseqload
 DATADIR=/data/downloads/us.expasy.ch/sptrnrdb
 #DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
 
-# list of files to pipe to application
-PIPED_INFILES=${DATADIR}/uniprot_sprot.dat.gz
+# list of files to pipe to application when not using radar
+PIPED_INFILES=
+RADAR_INPUT=true
 
 # SwissProt sequence quality
 SEQ_QUALITY=High
@@ -30,6 +31,6 @@ SEQ_PROVIDER=SWISS-PROT
 # logical db name for SwissProt
 SEQ_LOGICALDB=SWISS-PROT
 
-export FILEDIR DATADIR PIPED_INFILES SEQ_QUALITY
+export FILEDIR DATADIR PIPED_INFILES RADAR_INPUT SEQ_QUALITY
 export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
 

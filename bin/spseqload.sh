@@ -240,7 +240,7 @@ then
     for file in ${APP_INFILES}
     do
 	${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
-	    ${JOBKEY} ${file}
+	    ${JOBKEY} ${file} ${SEQ_PROVIDER}
 	STAT=$?
 	if [ ${STAT} -ne 0 ]
 	then

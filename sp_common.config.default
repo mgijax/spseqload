@@ -152,6 +152,11 @@ export INFILE_NAME INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER
 export APP_CAT_METHOD INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE 
 export MS_OK_TO_SEARCH_ASSOC_CLONES SEQ_REPEAT_FILE
 
+# number of existing sequences to batch before processing
+SEQ_QUERY_BATCHSIZE=400
+
+export SEQ_QUERY_BATCHSIZE
+
 # SEQ_Sequence sequence type controlled vocab for protein
 SEQ_TYPE=Polypeptide
 

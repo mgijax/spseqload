@@ -172,6 +172,9 @@ run ()
 	shutDown
 	exit 1
     fi
+    echo "spseqload completed successfully" >> ${LOG_PROC}
+
+
 }
 
 ##################################################################

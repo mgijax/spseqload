@@ -263,6 +263,10 @@ fi
 #
 # run msp qc reports
 #
+
+echo 'Running MSP QC reports' | tee -a ${LOG_DIAG}
+echo "\n`date`" >> ${LOG_DIAG}
+
 ${APP_MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -275,6 +279,10 @@ fi
 #
 # run seqload qc reports
 #
+
+echo 'Running Sequence QC reports' | tee -a ${LOG_DIAG}
+echo "\n`date`" >> ${LOG_DIAG}
+
 ${APP_SEQ_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
 if [ ${STAT} -ne 0 ]

@@ -1,9 +1,34 @@
+TAG: spseqload-3-1-0-1
+DATE: 12/08/2004
+STAFF: sc
+RELEASE:
+CHANGES: TR6265 merge assembly branch to trunk
+
 TAG: spseqload-1-0-14
 DATE: 12/08/2004
 STAFF: sc
 RELEASE:
 CHANGES: TR6392
 1) spseqload.sh - added SEQ_PROVIDER param to call to logProcessedFile.csh
+
+DATE: 11/30/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: Install.README - added -n to DLAInstall example
+
+TAG: spseqload-assembly-2
+DATE: 11/19/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:
+1) tr6047 corrected some import paths
+2) tr6336 *.config.default - new common config vars
+
+TAG: spseqload-assembly-1
+DATE: 11/17/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: tr6047 lib_java_dla refactoring
 
 TAG: spseqload-assembly-BP
 DATE: 11/17/2004

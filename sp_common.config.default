@@ -101,7 +101,7 @@ DLA_START=org.jax.mgi.shr.dla.DLAStart
 # this overrides the default BCP_Inline_Stream
 DLA_DB_PREFIX=MGD
 DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
-DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
+DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
 
 # seqloader QC report script
 APP_SEQ_QCRPT=${APP_QCRPTDIR}/seqload/runQC.csh
@@ -183,12 +183,14 @@ LOG_VAL=${LOGDIR}/spseqload.val.log
 
 # Send debug messages to the diagnostic log
 LOG_DEBUG=false
+DBDEBUG=false
+CACHE_DEBUG=false
 
 # logger factory class - allows classes to get their own loggers
 LOG_FACTORY=org.jax.mgi.shr.dla.DLALoggerFactory
 
-export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG LOG_FACTORY
-
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG DBDEBUG
+export CACHE_DEBUG LOG_FACTORY
 
 ###########################################################################
 #

@@ -1,3 +1,19 @@
+DATE: 06/29/2004
+STAFF: sc
+CHANGES:
+1) Install - removed
+2) README.Install - added to explain how to use DLAInstall
+3) sp_common.config.defaults - added OUTPUTDIR,
+   LOG_FACTORY, DLA_LOADER, DLA_START, and  DLA_LOAD_STREAM. Prefixed
+   with SEQ_ and APP_ where appropriate.
+4) spseqload.config.defaults and trseqload.config.defaults - 
+   removed DATADIR added INPUTDIR. Renamed PIPED_INFILES to APP_INFILES
+   prefixed RADAR_INPUT with APP_
+5) SPSeqloader.java - factored and now extends Seqloader.java
+6) spseqload.sh - updated to use INPUTDIR, OUTPUTDIR, APP_INFILES and other 
+   vars whose names were updated with prefixes. removed creation of 
+   runtime.config - Java Configuration now supports multiple files.
+ 
 DATE: 06/14/2004
 STAFF: sc
 CHANGES:

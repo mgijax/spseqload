@@ -39,7 +39,9 @@ INDEXFILE=index.html
 #  Establish the configuration file names.
 #
 CONFIG_COMMON=common.config.sh
-CONFIG_GBLOAD=spseqload.config
+CONFIG_SPCOMMON=sp_common.config
+CONFIG_SP=spseqload.config
+CONFIG_TR=trseqload.config
 
 #
 #  Make sure the common configuration file exists, set up a symbolic link
@@ -63,17 +65,6 @@ else
 fi
 
 #
-#  Run the spseqload configuration file.
-#
-if [ -r ${CONFIG_GBLOAD} ]
-then
-    . ${CONFIG_GBLOAD}
-else
-    echo "Cannot read configuration file: ${CONFIG_GBLOAD}"
-    install_failed
-fi
-
-#
 #  Verify that the ant utility has been defined.
 #
 if [ "${ANT}" = "" ]
@@ -83,114 +74,140 @@ then
     install_failed
 fi
 
-#
-#  Verify that the FILE directory has been defined.
-#
-if [ "${FILEDIR}" = "" ]
-then
-    echo "Environment variable FILEDIR has not been defined."
-    echo "It should be set to the directory where the archive, data,"
-    echo "logs and reports directories are created."
-    install_failed
-fi
-
-#
-#  Verify that the ARCHIVE directory has been defined.
-#
-if [ "${ARCHIVEDIR}" = "" ]
-then
-    echo "Environment variable ARCHIVEDIR has not been defined."
-    echo "It should be set to the directory where archive files are created."
-    install_failed
-fi
-
-#
-#  Verify that the DATA (input file )directory has been defined.
-#
-if [ "${DATADIR}" = "" ]
-then
-    echo "Environment variable DATADIR has not been defined."
-    echo "It should be set to the directory where input files reside and"
-    echo "bcp files are created."
-    install_failed
-fi
-
-#
-#  Verify that the MGD_BCP_PATH (bcp and script output file )
-#  directory has been defined.
-#
-if [ "${MGD_BCP_PATH}" = "" ]
-then
-    echo "Environment variable MGD_BCP_PATH has not been defined."
-    echo "It should be set to the directory where input files reside and"
-    echo "bcp files are created."
-    install_failed
-fi
-
-#
-#  Verify that the LOGS directory has been defined.
-#
-if [ "${LOGDIR}" = "" ]
-then
-    echo "Environment variable LOGDIR has not been defined."
-    echo "It should be set to the directory where log files are created."
-    install_failed
-fi
-
-#
-#  Verify that the REPORTS directory has been defined.
-#
-if [ "${RPTDIR}" = "" ]
-then
-    echo "Environment variable RPTDIR has not been defined."
-    echo "It should be set to the directory where report files are created."
-    install_failed
-fi
-
-#
-#  Make the required directories if they don't already exist.
-#
-for i in ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
+for config in ${CONFIG_SP} ${CONFIG_TR}
 do
-    if [ ! -d ${i} ]
+    #
+    #  Run the sp or tr configuration file.
+    #
+    if [ -r ${config} ]
     then
-        mkdir -p ${i} >/dev/null 2>&1
-        if [ $? -eq 0 ]
-        then
-            echo "Directory created: ${i}"
-        else
-            echo "Cannot create directory: ${i}"
-            install_failed
-        fi
+	. ${config}
     else
-        echo "Directory already exists: ${i}"
+	echo "Cannot read configuration file: ${config}"
+	install_failed
     fi
+
+    #
+    #  Run the common spseqload configuration file.
+    #
+    if [ -r ${CONFIG_SPCOMMON} ]
+    then
+	. ${CONFIG_SPCOMMON}
+    else
+	echo "Cannot read configuration file: ${CONFIG_SPCOMMON}"
+	install_failed
+    fi
+
+    #
+    #  Verify that the FILE directory has been defined.
+    #
+    if [ "${FILEDIR}" = "" ]
+    then
+	echo "Environment variable FILEDIR has not been defined."
+	echo "It should be set to the directory where the archive, data,"
+	echo "logs and reports directories are created."
+	install_failed
+    fi
+
+    #
+    #  Verify that the ARCHIVE directory has been defined.
+    #
+    if [ "${ARCHIVEDIR}" = "" ]
+    then
+	echo "Environment variable ARCHIVEDIR has not been defined."
+	echo "It should be set to the directory where archive files are created."
+	install_failed
+    fi
+
+    #
+    #  Verify that the DATA (input file )directory has been defined.
+    #
+    if [ "${DATADIR}" = "" ]
+    then
+	echo "Environment variable DATADIR has not been defined."
+	echo "It should be set to the directory where input files reside and"
+	echo "bcp files are created."
+	install_failed
+    fi
+
+    #
+    #  Verify that the MGD_BCP_PATH (bcp and script output file )
+    #  directory has been defined.
+    #
+    if [ "${MGD_BCP_PATH}" = "" ]
+    then
+	echo "Environment variable MGD_BCP_PATH has not been defined."
+	echo "It should be set to the directory where input files reside and"
+	echo "bcp files are created."
+	install_failed
+    fi
+
+    #
+    #  Verify that the LOGS directory has been defined.
+    #
+    if [ "${LOGDIR}" = "" ]
+    then
+	echo "Environment variable LOGDIR has not been defined."
+	echo "It should be set to the directory where log files are created."
+	install_failed
+    fi
+
+    #
+    #  Verify that the REPORTS directory has been defined.
+    #
+    if [ "${RPTDIR}" = "" ]
+    then
+	echo "Environment variable RPTDIR has not been defined."
+	echo "It should be set to the directory where report files are created."
+	install_failed
+    fi
+
+    #
+    #  Make the required directories if they don't already exist.
+    #
+    for i in ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
+    do
+	if [ ! -d ${i} ]
+	then
+	    mkdir -p ${i} >/dev/null 2>&1
+	    if [ $? -eq 0 ]
+	    then
+		echo "Directory created: ${i}"
+	    else
+		echo "Cannot create directory: ${i}"
+		install_failed
+	    fi
+	else
+	    echo "Directory already exists: ${i}"
+	fi
+    done
+
+    #
+    #  Copy the HTML index file to the FILE directory.
+    #
+    if [ -f ${INDEXFILE} ]
+    then
+	echo "Copy ${INDEXFILE} to ${FILEDIR}"
+	cp -p ${INDEXFILE} ${FILEDIR}
+    else
+	echo "Missing HTML index file: ${INDEXFILE}"
+	install_failed
+    fi
+
+    #
+    #  Set permissions on installed directories and files.
+    #
+    echo "Set permissions on installed directories and files"
+    chmod -f 755 ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
 done
 
-#
-#  Set permissions on installed directories and files.
-#
-echo "Set permissions on installed directories and files"
-chmod -f 755 ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
 chmod -f 750 bin system_docs
-chmod -f 640 spseqload.config* build.xml
+chmod -f 640 sp*.config* tr*.config* build.xml
 chmod -f 644 ${INDEXFILE}
 find bin -name "*.sh" -exec chmod -f 750 {} \;
 find java -type d -exec chmod -f 750 {} \;
 find java -name "*.java" -exec chmod -f 640 {} \;
 find system_docs -type f -exec chmod -f 640 {} \;
-
-#
-#  Copy the HTML index file to the FILE directory.
-#
-if [ -f ${INDEXFILE} ]
-then
-    echo "Copy ${INDEXFILE} to ${FILEDIR}"
-    cp -p ${INDEXFILE} ${FILEDIR}
-else
-    echo "Missing HTML index file: ${INDEXFILE}"
-    install_failed
-fi
 
 #
 #  Compile the source code, create a jar file and generate javadocs.

@@ -1,8 +1,15 @@
+TAG: spseqload-1-0-7
+DATE: 05/24/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: index.html - corrected path to trembl new input file and trembl 
+         log files
+
 TAG: spseqload-1-0-6
 TAG: spseqload-1-0-5
 DATE: 05/18/2004
 STAFF: sc
-RELEASE: dev
+RELEASE: prod
 CHANGES: SPSeqloader - removed catch of ChangedLibraryException
 See changes below since last tag
 

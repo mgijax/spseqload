@@ -1,3 +1,14 @@
+TAG: spseqload-1-0-4
+DATE: 04/27/2004
+STAFF: sc
+RELEASE: dev
+CHANGES:
+1) Install - added instructions for copying
+   all three *config.defaults
+2) Install - put testing and sourcing of sp_common.config, spseqload.config,
+   and trseqload.config in a loop.
+3) spseqload.sh - added quotes around Usage value.
+
 TAG: spseqload-1-0-3
 DATE: 04/27/2004
 STAFF: sc

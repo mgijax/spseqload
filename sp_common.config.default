@@ -93,7 +93,7 @@ export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH
 
 #  Java applications
 DLA_LOADER=org.jax.mgi.app.spseqloader.SPSeqloader
-DLA_START=org.jax.mgi.shr.dla.DLAStart
+DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
 
 # SQL STREAM
 # this overrides the default BCP_Inline_Stream
@@ -185,7 +185,7 @@ DBDEBUG=false
 CACHE_DEBUG=false
 
 # logger factory class - allows classes to get their own loggers
-LOG_FACTORY=org.jax.mgi.shr.dla.DLALoggerFactory
+LOG_FACTORY=org.jax.mgi.shr.dla.log.DLALoggerFactory
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG DBDEBUG
 export CACHE_DEBUG LOG_FACTORY

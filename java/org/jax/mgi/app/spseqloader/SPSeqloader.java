@@ -4,9 +4,9 @@
 package org.jax.mgi.app.spseqloader;
 
 import org.jax.mgi.shr.timing.Stopwatch;
-import org.jax.mgi.shr.dla.seqloader.EMBLOrganismChecker;
-import org.jax.mgi.shr.dla.seqloader.SeqLoader;
-import org.jax.mgi.shr.dla.embl.EMBLInputFileNoSeq;
+import org.jax.mgi.shr.dla.input.genbank.EMBLOrganismChecker;
+import org.jax.mgi.shr.dla.loaderl.seq.SeqLoader;
+import org.jax.mgi.shr.dla.input.embl.EMBLInputFileNoSeq;
 import org.jax.mgi.shr.exception.MGIException;
 import java.util.Vector;
 import java.util.Iterator;

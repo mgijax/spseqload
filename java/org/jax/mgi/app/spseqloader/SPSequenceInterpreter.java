@@ -7,20 +7,20 @@ import java.util.*;
 import java.util.regex.*;
 import java.sql.*;
 
-import org.jax.mgi.shr.dla.seqloader.SequenceInterpreter;
-import org.jax.mgi.shr.dla.seqloader.SequenceInput;
-import org.jax.mgi.shr.dla.seqloader.SeqloaderConstants;
-import org.jax.mgi.shr.dla.seqloader.SeqRefAssocPair;
-import org.jax.mgi.shr.dla.seqloader.DateConverter;
-import org.jax.mgi.shr.dla.seqloader.AccessionRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.RefAssocRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.SequenceRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.EMBLFormatInterpreter;
-import org.jax.mgi.shr.dla.seqloader.EMBLOrganismChecker;
+import org.jax.mgi.shr.dla.input.SequenceInterpreter;
+import org.jax.mgi.shr.dla.input.SequenceInput;
+import org.jax.mgi.shr.dla.loader.seq.SeqloaderConstants;
+import org.jax.mgi.shr.dla.loads.SeqRefAssoc.SeqRefAssocPair;
+import org.jax.mgi.shr.dla.input.DateConverter;
+import org.jax.mgi.dbs.mgd.loads.AccessionRawAttributes;
+import org.jax.mgi.shr.dbs.mgd.loads.SeqRefAssoc.RefAssocRawAttributes;
+import org.jax.mgi.shr.dbs.mgd.loads.Seq.SequenceRawAttributes;
+import org.jax.mgi.shr.dla.input.embl.EMBLFormatInterpreter;
+import org.jax.mgi.shr.dla.input.embl.EMBLOrganismChecker;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.ioutils.RecordFormatException;
 import org.jax.mgi.shr.stringutil.StringLib;
-import org.jax.mgi.dbs.mgd.MolecularSource.MSRawAttributes;
+import org.jax.mgi.dbs.mgd.loads.SeqSrc.MSRawAttributes;
 
 
     /**

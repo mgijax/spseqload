@@ -1,8 +1,11 @@
+TAG: spseqload-1-0-9
 TAG: spseqload-1-0-8
 DATE: 06/08/2004
 STAFF: sc
 RELEASE: prod
-CHANGES: See changes since last tag below
+CHANGES: 
+1) See changes since last tag below
+2) index.html - updated input file path
 
 DATE: 06/04/2004
 STAFF: sc

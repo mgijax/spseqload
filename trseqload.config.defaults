@@ -8,10 +8,12 @@
 ###########################################################################
 
 # this dir holds the following dirs: logs, data, archive, reports
-FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
+FILEDIR=/data/loads/swissprot/trseqload
+#FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
 
 # Input file directory
-DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
+DATADIR=/data/downloads/us.expasy.ch/sptrnrdb
+#DATADIR=/net/hobbiton/data/downloads/us.expasy.ch/sptrnrdb
 
 # list of files to pipe to application
 PIPED_INFILES="${DATADIR}/uniprot_trembl.dat.gz ${DATADIR}/new/uniprot_trembl_new.dat.gz"

@@ -35,7 +35,7 @@
 #      - Exceptions written to standard error
 #      - Configuration and initialization errors are written to a log file
 #        for the shell script
-#      - QC reports as defined by ${SEQLOAD_QCRPT} and ${MSP_QCRPT}
+#      - QC reports as defined by ${APP_SEQ_QCRPT} and ${APP_MSP_QCRPT}
 #        
 #
 #  Exit Codes:
@@ -100,13 +100,15 @@ then
 fi
 
 #
-#  Concatenate the configuration files together to produce one configuration
-#  file that can be run to set up the environment. CONFIG_SPCOMMON is depend
-#  ent on CONFIG_LOAD
+# Source the common configuration files
 #
-CONFIG_RUNTIME=`pwd`/runtime.config
-cat ${CONFIG_COMMON} ${CONFIG_LOAD} ${CONFIG_SPCOMMON} > ${CONFIG_RUNTIME}
-. ${CONFIG_RUNTIME}
+. ${CONFIG_COMMON}
+
+#
+# Source the SwissProt Load configuration files
+#
+. ${CONFIG_LOAD}
+. ${CONFIG_SPCOMMON}
 
 echo "javaruntime:${JAVARUNTIMEOPTS}"
 echo "classpath:${CLASSPATH}"
@@ -114,9 +116,20 @@ echo "dbserver:${MGD_DBSERVER}"
 echo "database:${MGD_DBNAME}"
 
 #
-#  Include the DLA library functions.
+#  Source the DLA library functions.
 #
-. ${DLAFUNCTIONS}
+if [ "${DLAJOBSTREAMFUNC}" != "" ]
+then
+    if [ -r ${DLAJOBSTREAMFUNC} ]
+    then
+        . ${DLAJOBSTREAMFUNC}
+    else
+        echo "Cannot source DLA functions script: ${DLAJOBSTREAMFUNC}"
+        exit 1
+    fi
+else
+    echo "Environment variable DLAJOBSTREAMFUNC has not been defined."
+fi
 
 #
 #  Function that performs cleanup tasks for the job stream prior to
@@ -125,6 +138,11 @@ echo "database:${MGD_DBNAME}"
 shutDown ()
 {
     #
+    # report location of logs
+    #
+    echo "\nSee logs at ${LOGDIR}\n" >> ${LOG_PROC}
+
+    #
     # call DLA library function
     #
     postload
@@ -132,17 +150,7 @@ shutDown ()
     #
     #  Mail the logs to the support staff.
     #
-    if [ "${MAIL_LOG_PROC}" != "" ]
-    then
-        mailLog ${MAIL_LOG_PROC} "SwissProt Load - Process Summary Log" \
-	    ${LOG_PROC} | tee -a ${LOG}
-    fi
-
-    if [ "${MAIL_LOG_CUR}" != "" ]
-    then
-        mailLog ${MAIL_LOG_CUR} "SwissProt Load - Curator Summary Log" \
-	    ${LOG_CUR} | tee -a ${LOG}
-    fi
+    mailLog "SWISS-PROT Load" | tee -a ${LOG}
 }
 
 #
@@ -155,14 +163,14 @@ run ()
     # log time and input files to process
     #
     echo "\n`date`" >> ${LOG_PROC}
-    echo "Files from stdin: ${CAT_METHOD} ${PIPED_INFILES}" | tee -a ${LOG_DIAG} 
+    echo "Files from stdin: ${APP_CAT_METHOD} ${APP_INFILES}" | tee -a ${LOG_DIAG} ${LOG_PROC}
     #
     # run spseqload
     #
-    ${CAT_METHOD}  ${PIPED_INFILES}  | \
-	${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
-	-DCONFIG=${CONFIG_RUNTIME} -DJOBKEY=${JOBKEY} \
-	${SPSEQLOAD_APP} | tee -a  ${LOGDIR}/stdouterr
+    ${APP_CAT_METHOD}  ${APP_INFILES}  | \
+	${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
+	-DCONFIG=${CONFIG_COMMON},${CONFIG_LOAD},${CONFIG_SPCOMMON} \
+	-DJOBKEY=${JOBKEY} ${DLA_START}
 
     STAT=$?
     if [ ${STAT} -ne 0 ]
@@ -190,10 +198,10 @@ preload
 # get input files
 #
 # Check to see if we're getting files from RADAR
-echo "RADAR_INPUT=${RADAR_INPUT}"
-if [  ${RADAR_INPUT} = true ]
+echo "APP_RADAR_INPUT=${APP_RADAR_INPUT}"
+if [  ${APP_RADAR_INPUT} = true ]
 then
-    PIPED_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
+    APP_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
     STAT=$?
     if [ ${STAT} -ne 0 ]
@@ -203,20 +211,20 @@ then
 	shutDown
 	exit 1
     fi
-    if [ "${PIPED_INFILES}" = "" ]
+    if [ "${APP_INFILES}" = "" ]
     then
-	echo "No files to process" | tee -a ${LOG_DIAG}
+	echo "No files to process" | tee -a ${LOG_DIAG} ${LOG_PROC}
     shutDown
     exit 0
     fi
 fi
 
-# if input file from Configuration check that PIPED_INFILES has been defined
-if [ "${PIPED_INFILES}" = "" ]
+# if input file from Configuration check that APP_INFILES has been defined
+if [ "${APP_INFILES}" = "" ]
 then
      # set STAT for endJobStream.py called from postload in shutDown
     STAT=1
-    echo "RADAR_INPUT=false. Check that PIPED_INFILES has been configured. Return status: ${STAT}" | tee -a ${LOG_DIAG}
+    echo "APP_RADAR_INPUT=false. Check that APP_INFILES has been configured. Return status: ${STAT}" | tee -a ${LOG_DIAG}
     shutDown
     exit 0
 fi
@@ -229,11 +237,11 @@ run
 #
 # log the processed files
 #
-if [  ${RADAR_INPUT} = true ]
+if [  ${APP_RADAR_INPUT} = true ]
 then
 
-    echo "Logging processed files ${PIPED_INFILES}" | tee -a ${LOG_DIAG}
-    for file in ${PIPED_INFILES}
+    echo "Logging processed files ${APP_INFILES}" | tee -a ${LOG_DIAG}
+    for file in ${APP_INFILES}
     do
 	${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
 	    ${JOBKEY} ${file}
@@ -253,7 +261,7 @@ fi
 #
 # run msp qc reports
 #
-${MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
+${APP_MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
@@ -265,7 +273,7 @@ fi
 #
 # run seqload qc reports
 #
-${SEQLOAD_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
+${APP_SEQ_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

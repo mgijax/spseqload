@@ -1,0 +1,41 @@
+#format: sh
+#
+#  trseqload.config.defaults
+#
+#  This file sets up environment variables that are needed for 
+#  processing TrEMBL sequences
+#
+###########################################################################
+
+# this dir holds the following dirs: logs, data, archive, reports
+FILEDIR=/data/loads/swissprot/trseqload
+#FILEDIR=/net/mtdoom/vol/rohan/data/loads/swissprot/trseqload
+
+# Input file directory - used with APP_INFILES to process adhoc input
+INPUTDIR=/data/downloads/grendel.jax.org/sptrnrdb
+#INPUTDIR=/net/hobbiton/data/downloads/grendel.jax.org/sptrnrdb
+
+# list of files to pipe to application if not using radar
+APP_INFILES=
+
+# true if get input files from RADAR
+APP_RADAR_INPUT=true
+
+# TrEMBL sequence quality
+SEQ_QUALITY=Medium
+
+# this load's login value for DB table CreatedBy and ModifiedBy
+JOBSTREAM=trembl_seqload
+
+# SEQ_Sequence Provider controlled vocab for TrEMBL
+SEQ_PROVIDER=TrEMBL
+
+# logical db name for TrEMBL
+SEQ_LOGICALDB=TrEMBL
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="TrEMBL Load"
+
+export FILEDIR INPUTDIR APP_INFILES APP_RADAR_INPUT SEQ_QUALITY
+export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB MAIL_LOADNAME
+

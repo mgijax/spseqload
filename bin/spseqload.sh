@@ -190,7 +190,6 @@ preload
 echo "RADAR_INPUT=${RADAR_INPUT}"
 if [  ${RADAR_INPUT} = true ]
 then
-    echo "call to getFiles: ${RADARDBUTILSDIR}/bin/getFilesToProcess.csh ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}"
     PIPED_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
     STAT=$?

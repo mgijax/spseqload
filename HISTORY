@@ -1,3 +1,11 @@
+TAG: spseqload-assembly-2
+DATE: 11/19/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:
+1) tr6047 corrected some import paths
+2) tr6336 *.config.default - new common config vars
+
 TAG: spseqload-assembly-1
 DATE: 11/17/2004
 STAFF: sc

@@ -1,9 +1,13 @@
 To Install spseqload:
+1) cp sp_common.config.defaults sp_common.config
+   cp spseqload.config.defaults spseqload.config
+   cp trseqload.config.defaults trseqload.config
+and edit as necessary
 
-1) DLAInstall common.config.sh spseqload.config sp_common.config
-2) DLAInstall common.config.sh trseqload.config sp_common.config
+2) DLAInstall common.config.sh spseqload.config sp_common.config
+3) DLAInstall common.config.sh trseqload.config sp_common.config
 
 Typical Installs are done from spseqload root directory as follows:
-1) /usr/local/mgi/live/dbutils/dlautils/DLAInstall /usr/local/mgi/live/mgietc/common.config.sh spseqload.config sp_common.config
-2) /usr/local/mgi/live/dbutils/dlautils/DLAInstall /usr/local/mgi/live/mgietc/common.config.sh trseqload.config sp_common.config
+2) /usr/local/mgi/live/dbutils/dlautils/DLAInstall /usr/local/mgi/live/mgietc/common.config.sh spseqload.config sp_common.config
+3) /usr/local/mgi/live/dbutils/dlautils/DLAInstall /usr/local/mgi/live/mgietc/common.config.sh trseqload.config sp_common.config
 

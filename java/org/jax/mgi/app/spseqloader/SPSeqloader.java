@@ -53,7 +53,7 @@ public class SPSeqloader extends SeqLoader {
      * @effects nothing
      * @throws nothing
      */
-    protected void getRecordDataIterator() throws MGIException {
+    protected void getDataIterator() throws MGIException {
 
         // create an organism checker for the interpreter
         EMBLOrganismChecker oc = new EMBLOrganismChecker();

@@ -184,9 +184,69 @@ run ()
 preload
 
 #
+# get input files
+#
+# Check to see if we're getting files from RADAR
+echo "RADAR_INPUT=${RADAR_INPUT}"
+if [  ${RADAR_INPUT} = true ]
+then
+    echo "call to getFiles: ${RADARDBUTILSDIR}/bin/getFilesToProcess.csh ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}"
+    PIPED_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
+        ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+	echo "getFilesToProcess.csh failed.  \
+	    Return status: ${STAT}" >> ${LOG_PROC}
+	shutDown
+	exit 1
+    fi
+    if [ "${PIPED_INFILES}" = "" ]
+    then
+	echo "No files to process" | tee -a ${LOG_DIAG}
+    shutDown
+    exit 0
+fi
+
+fi
+# if input file from Configuration check that PIPED_INFILES has been defined
+if [ "${PIPED_INFILES}" = "" ]
+then
+    echo "RADAR_INPUT=false. Check that PIPED_INFILES has been configured" | tee -a ${LOG_DIAG}
+    # set STAT for endJobStream.py called from postload in shutDown
+    STAT=1
+    shutDown
+    exit 0
+fi
+
+#
 # run the load
 #
 run
+
+#
+# log the processed files
+#
+if [  ${RADAR_INPUT} = true ]
+then
+
+    echo "Logging processed files ${PIPED_INFILES}" | tee -a ${LOG_DIAG}
+    for file in ${PIPED_INFILES}
+    do
+	${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
+	    ${JOBKEY} ${file}
+	STAT=$?
+	if [ ${STAT} -ne 0 ]
+	then
+	    echo "logProcessedFile.csh failed.  \
+		Return status: ${STAT}" >> ${LOG_PROC}
+	    shutDown
+	    exit 1
+	fi
+
+    done
+    echo 'Done logging processed files' | tee -a ${LOG_DIAG}
+fi
 
 #
 # run msp qc reports

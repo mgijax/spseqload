@@ -1,3 +1,16 @@
+TAG: spseqload-1-0-3
+DATE: 04/27/2004
+STAFF: sc
+RELEASE: dev
+CHANGES:
+1) spseqload.sh - now takes config file as parameter
+2) sp_common.config.defaults - created for config
+   common to both sp and trembl
+3) spseqload.config.defaults - created for config
+   specific to swissprot
+4) trseqload.config.defaults - created for config
+   specific to trembl
+
 TAG: spseqload-1-0-2
 DATE: 04/13/2004
 STAFF: sc

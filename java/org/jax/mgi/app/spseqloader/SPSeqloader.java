@@ -30,7 +30,6 @@ import org.jax.mgi.shr.dla.seqloader.SequenceResolverException;
 import org.jax.mgi.shr.dla.seqloader.RepeatSequenceException;
 import org.jax.mgi.shr.dla.seqloader.RepeatSequenceException;
 import org.jax.mgi.shr.dla.seqloader.ChangedOrganismException;
-import org.jax.mgi.shr.dla.seqloader.ChangedLibraryException;
 import org.jax.mgi.shr.dla.seqloader.ProcessSequenceInput;
 import org.jax.mgi.shr.dla.DLALogger;
 import org.jax.mgi.shr.dla.DLAException;
@@ -382,16 +381,7 @@ public class SPSeqloader {
                 errCtr++;
                 continue;
             }
-            // log changed library, go to next sequence
-            catch (ChangedLibraryException e) {
-                String message = e.getMessage() + " Sequence: " +
-                    si.getPrimaryAcc().getAccID();
-                logger.logdInfo(message, true);
-                logger.logcInfo(message, true);
 
-                errCtr++;
-                continue;
-            }
             // if we can't resolve SEQ_Sequence attributes, go to the next
             // sequence
             catch (SequenceResolverException e) {

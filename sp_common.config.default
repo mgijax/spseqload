@@ -8,6 +8,17 @@
 #  IMPORTANT: This file is dependent on FILEDIR set in either spseqload.config
 #             or trseqload.config
 ###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
 
 ###########################################################################
 #
@@ -16,66 +27,20 @@
 ###########################################################################
 
 #  Installation directory for the SwissProt sequence load
-INSTALLDIR=${USRLOCALMGI}/dataload/spseqload
+INSTALLDIR=${DATALOAD}/spseqload
 
-#  Installation directory for the QC report product
-APP_QCRPTDIR=${QCRPTDIR}
-
-export INSTALLDIR APP_QCRPTDIR
+export INSTALLDIR 
 
 ###########################################################################
 #
-#  DATABASE SETTINGS BY DATABASE
-#
-###########################################################################
-
-# MGD Connection parameters 
-MGD_DBSERVER=PROD_MGI
-#MGD_DBSERVER=DEV1_MGI
-
-MGD_DBURL=shire.informatics.jax.org:4100
-#MGD_DBURL=rohan.informatics.jax.org:4101
-
-MGD_DBNAME=mgd
-#MGD_DBNAME=mgd_sc
-
-MGD_DBUSER=mgd_dbo
-MGD_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
-
-MGD_DBSCHEMADIR=${MGDDBSCHEMADIR}
-
-export MGD_DBSERVER MGD_DBURL MGD_DBNAME
-export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
-
-# RADAR Connection parameters 
-
-RADAR_DBSERVER=PROD_MGI
-#RADAR_DBSERVER=DEV1_MGI
-
-RADAR_DBURL=shire.informatics.jax.org:4100
-#RADAR_DBURL=rohan.informatics.jax.org:4101
-
-RADAR_DBNAME=radar
-#RADAR_DBNAME=radar_release
-
-RADAR_DBUSER=mgd_dbo
-RADAR_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
-
-RADAR_DBSCHEMADIR=${RADARDBSCHEMADIR}
-
-export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER 
-export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
-
-###########################################################################
-#
-#  SOFTWARE SETTINGS
+#  JAVA SETTINGS
 #
 ###########################################################################
 
 # allow 2G initial and max heap memory
 JAVARUNTIMEOPTS="-Xms2G -Xmx2G"    
 
-JAVA_LIB=${JAVAPATH}/lib_java_dla/dla.jar:${JAVAPATH}/lib_java_core/core.jar:${JAVAPATH}/lib_java_dbsmgd/dbsmgd.jar:${JAVAPATH}/lib_java_dbsrdr/dbsrdr.jar
+JAVA_LIB=${{MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
@@ -87,34 +52,24 @@ export JAVARUNTIMEOPTS CLASSPATH
 #
 ###########################################################################
 
-#  Java applications
-DLA_LOADER=org.jax.mgi.app.spseqloader.SPSeqloader
-DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
+#
+# output file settings
+#
 
-# SQL STREAM
-# this overrides the default BCP_Inline_Stream
-DLA_DB_PREFIX=MGD
-DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
-DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
-
-# seqloader QC report script
-APP_SEQ_QCRPT=${APP_QCRPTDIR}/seqload/runQC.csh
-
-# molecular source processor QC report script
-APP_MSP_QCRPT=${APP_QCRPTDIR}/msp/runQC.csh
-
-export DLA_LOADER DLA_START DLA_LOAD_STREAM
-export APP_SEQ_QCRPT APP_MSP_QCRPT
-
-#  Path name of the output, report, log and archive directories
+# Full path the the logs, reports, and archive directories
+# FILEDIR defined in specific config file
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
 ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
+
 export LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
+#
+# input file settings
+#
 
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
-#  the application. 
+#  the application.
 INFILE_NAME=STDIN
 
 # how files are piped to the application
@@ -137,6 +92,32 @@ INFILE_END_DELIMITER="^SQ"
 # 21,000,000 = ~20 MB
 INFILE_BUFFERSIZE=21000000
 
+export INFILE_NAME INFILE_USE_REGEX INFILE_BEGIN_DELIMITER 
+export INFILE_END_DELIMITER INFILE_BUFFERSIZE
+
+#
+# general settings
+#
+
+ # Java applications
+DLA_LOADER=org.jax.mgi.app.spseqloader.SPSeqloader
+DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
+
+# SQL STREAM
+# this overrides the default BCP_Inline_Stream
+DLA_DB_PREFIX=MGD
+DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
+DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
+
+# seqloader QC report script
+APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
+
+# molecular source processor QC report script
+APP_MSP_QCRPT=${QCRPTS}/msp/runQC.csh
+
+export DLA_LOADER DLA_START DLA_LOAD_STREAM
+export APP_SEQ_QCRPT APP_MSP_QCRPT
+
 # incremental, incremental_initial, or delete_reload
 # incremental_initial uses no event detections - add only
 SEQ_LOAD_MODE=delete_reload
@@ -148,9 +129,7 @@ MS_OK_TO_SEARCH_ASSOC_CLONES=false
 # once in the input
 SEQ_REPEAT_FILE=${OUTPUTDIR}/repeats.out
 
-export INFILE_NAME INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER 
-export APP_CAT_METHOD INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE 
-export MS_OK_TO_SEARCH_ASSOC_CLONES SEQ_REPEAT_FILE
+export SEQ_LOAD_MODE MS_OK_TO_SEARCH_ASSOC_CLONES SEQ_REPEAT_FILE
 
 # number of existing sequences to batch before processing
 SEQ_QUERY_BATCHSIZE=400
@@ -225,7 +204,8 @@ export RADAR_BCP_OK_TO_OVERWRITE
 ###########################################################################
 #
 #  SQL SCRIPTWRITER SETTINGS FOR merges and splits
-#
+#    Provided if we ever get non-cum updates from SwissProt to process
+#   in incremental mode
 ###########################################################################
 
 # setting used to create a ScriptWriter for the merges and split
@@ -245,7 +225,8 @@ export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
 ###########################################################################
 #
 #  SQL SCRIPTWRITER SETTINGS FOR updates
-#
+#  Provided if we ever get non-cum updates from SwissProt to process
+#   in incremental mode
 ###########################################################################
 
 # setting used to create a ScriptWriter to do MGD database updates
@@ -269,5 +250,5 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 ###########################################################################
 
 #  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_PROC="sc,lec"
+MAIL_LOG_PROC="mgiadmin"
 MAIL_LOG_CUR="sc"

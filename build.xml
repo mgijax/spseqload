@@ -1,25 +1,22 @@
 <?xml version="1.0"?>
-<!DOCTYPE definitions [
-  <!ENTITY build.targets SYSTEM "/usr/local/mgi/etc/build.app.targets.xml">
-]>
-
-<!-- Enter the name of your current project here
- -->
+<!-- This XML script is used to build the spseqload product.
+-->
 <project name="spseqload" default="compile" basedir=".">
 
-  <!-- Enter the name of your current project here
+   <!-- Get the system environment variables and define any other system
+        properties needed by the build.
    -->
-  <property name="proj.name" value="spseqload"/>
+   <property environment="env"/>
+   <property name="jar.name" value="spseqload"/>
+   <property name="classpath" value="${env.MGI_JAVALIB}/core.jar:${env.MGI_JAVALIB}/dbsmgd.jar:${env.MGI_JAVALIB}/dbsrdr.jar:${env.MGI_JAVALIB}/dla.jar:${env.JCONNECT}"/>
 
-  <!-- To override property definitions in the following
-       properties file, add new definitions in preceding lines.
-       The first definition of a property takes precedence
+   <!-- Import the universal targets.
    -->
-  <property file="/usr/local/mgi/etc/build.app.properties"/>
+   <import file="${env.MGICONFIG}/etc/build.lib.targets.xml"/>
 
-  <!-- Universal targets get included here
+   <!-- Define product specific targets.
    -->
-  &build.targets;
-
+   <target name="buildall" description="Executes task 'all'"
+           depends="all, link">
+   </target>
 </project>
-

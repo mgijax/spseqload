@@ -18,10 +18,11 @@
 #
 #  Inputs:
 #
-#      - Common configuration file (/usr/local/mgi/etc/common.config.sh)
-#      - SwissProt/TrEMBL common configuration file (sp_common.config)
-#      - SwissProt or TrEMBL configuration file (spseqload.config or
-#             trseqload.config)
+#      - Common configuration file - 
+#		/usr/local/mgi/live/mgiconfig/master.config.sh
+#      - SwissProt/TrEMBL common configuration file - sp_common.config
+#      - SwissProt or TrEMBL configuration file - spseqload.config or
+#             trseqload.config
 #      - One or more  SwissProt/TrEMBL input files 
 #
 #  Outputs:
@@ -72,7 +73,6 @@ fi
 #
 #  Establish the configuration file names.
 #
-CONFIG_COMMON=`pwd`/common.config.sh
 CONFIG_LOAD=`pwd`/$1
 CONFIG_SPCOMMON=`pwd`/sp_common.config
 
@@ -81,11 +81,6 @@ echo ${CONFIG_LOAD}
 #
 #  Make sure the configuration files are readable.
 #
-if [ ! -r ${CONFIG_COMMON} ]
-then
-    echo "Cannot read configuration file: ${CONFIG_COMMON}" | tee -a ${LOG}
-    exit 1
-fi
 
 if [ ! -r ${CONFIG_LOAD} ]
 then
@@ -100,15 +95,15 @@ then
 fi
 
 #
-# Source the common configuration files
-#
-. ${CONFIG_COMMON}
-
-#
 # Source the SwissProt Load configuration files
 #
 . ${CONFIG_LOAD}
 . ${CONFIG_SPCOMMON}
+
+#
+#  Establish master configuration file name, we pass this to java
+#
+CONFIG_MASTER=${MGICONFIG}/master.config.sh
 
 echo "javaruntime:${JAVARUNTIMEOPTS}"
 echo "classpath:${CLASSPATH}"
@@ -165,7 +160,7 @@ run ()
     #
     ${APP_CAT_METHOD}  ${APP_INFILES}  | \
 	${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
-	-DCONFIG=${CONFIG_COMMON},${CONFIG_LOAD},${CONFIG_SPCOMMON} \
+	-DCONFIG=${CONFIG_MASTER},${CONFIG_LOAD},${CONFIG_SPCOMMON} \
 	-DJOBKEY=${JOBKEY} ${DLA_START}
 
     STAT=$?
@@ -203,7 +198,7 @@ cleanDir ${OUTPUTDIR} ${RPTDIR}
 echo "APP_RADAR_INPUT=${APP_RADAR_INPUT}"
 if [  ${APP_RADAR_INPUT} = true ]
 then
-    APP_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
+    APP_INFILES=`${RADAR_DBUTILS}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
     STAT=$?
     if [ ${STAT} -ne 0 ]
@@ -245,7 +240,7 @@ then
     echo "Logging processed files ${APP_INFILES}" | tee -a ${LOG_DIAG}
     for file in ${APP_INFILES}
     do
-	${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
+	${RADAR_DBUTILS}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
 	    ${JOBKEY} ${file}  ${SEQ_PROVIDER}
 	STAT=$?
 	if [ ${STAT} -ne 0 ]

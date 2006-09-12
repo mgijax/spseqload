@@ -1,6 +1,6 @@
 #format: sh
 #
-#  sp_common.config.defaults
+#  Configuration common to TrEMBL and SwissProt spseqload
 #
 #  This file sets up environment variables that are needed for the
 #  SwissProt Sequence load
@@ -44,7 +44,7 @@ JAVA_LIB=${{MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrd
 
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
-export JAVARUNTIMEOPTS CLASSPATH
+export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 
 ###########################################################################
 #
@@ -60,10 +60,11 @@ export JAVARUNTIMEOPTS CLASSPATH
 # FILEDIR defined in specific config file
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
-ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
+ARCHIVEDIR=${FILEDIR}/archive
 
-export LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
+export LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR 
+
 #
 # input file settings
 #
@@ -92,7 +93,7 @@ INFILE_END_DELIMITER="^SQ"
 # 21,000,000 = ~20 MB
 INFILE_BUFFERSIZE=21000000
 
-export INFILE_NAME INFILE_USE_REGEX INFILE_BEGIN_DELIMITER 
+export INFILE_NAME APP_CAT_METHOD INFILE_USE_REGEX INFILE_BEGIN_DELIMITER 
 export INFILE_END_DELIMITER INFILE_BUFFERSIZE
 
 #
@@ -105,9 +106,12 @@ DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
 
 # SQL STREAM
 # this overrides the default BCP_Inline_Stream
-DLA_DB_PREFIX=MGD
 DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
 DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
+
+# prefix of Configuration variable names for the load database
+# e.g. prefixes DBSERVER, DBNAME, BCP_PATH, etc
+DLA_DB_PREFIX=MGD
 
 # seqloader QC report script
 APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
@@ -115,8 +119,8 @@ APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
 # molecular source processor QC report script
 APP_MSP_QCRPT=${QCRPTS}/msp/runQC.csh
 
-export DLA_LOADER DLA_START DLA_LOAD_STREAM
-export APP_SEQ_QCRPT APP_MSP_QCRPT
+export DLA_LOADER DLA_START DLA_LOAD_STREAM DLA_QC_STREAM
+export DLA_DB_PREFIX APP_SEQ_QCRPT APP_MSP_QCRPT
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial uses no event detections - add only
@@ -159,6 +163,7 @@ LOG_CUR=${LOGDIR}/spseqload.cur.log
 LOG_VAL=${LOGDIR}/spseqload.val.log
 
 # Send debug messages to the diagnostic log
+# toggle these to true as needed
 LOG_DEBUG=false
 DBDEBUG=false
 CACHE_DEBUG=false
@@ -252,3 +257,5 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 #  Recipient list for mailing the log files (comma-separated)
 MAIL_LOG_PROC="mgiadmin"
 MAIL_LOG_CUR="sc"
+
+export MAIL_LOG_PROC MAIL_LOG_CUR

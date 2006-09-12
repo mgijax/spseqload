@@ -1,6 +1,6 @@
 #format: sh
 #
-#  trseqload.config.defaults
+#  Configuration for TrEMBL spseqload
 #
 #  This file sets up environment variables that are needed for 
 #  processing TrEMBL sequences

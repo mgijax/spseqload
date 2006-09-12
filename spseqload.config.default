@@ -1,6 +1,6 @@
 #format: sh
 #
-#  spseqload.config.defaults
+#  Configuration for SwissProt spseqload
 #
 #  This file sets up environment variables that are needed for 
 #  processing SwissProt sequences

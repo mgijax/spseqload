@@ -2,10 +2,10 @@
 #
 #  Configuration common to TrEMBL and SwissProt spseqload
 #
-#  This file sets up environment variables that are needed for the
-#  SwissProt Sequence load
+#  This file sets up environment variables that common to both
+#  SwissProt and TrEMBL Sequence loads
 # 
-#  IMPORTANT: This file is dependent on FILEDIR set in either spseqload.config
+#  IMPORTANT: This file is dependent on FILEDIR set in both spseqload.config
 #             or trseqload.config
 ###########################################################################
 #
@@ -254,8 +254,7 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 #
 ###########################################################################
 
-#  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_PROC="mgiadmin"
+#  Recipient list for mailing the curation log file (comma-separated)
 MAIL_LOG_CUR="sc"
 
-export MAIL_LOG_PROC MAIL_LOG_CUR
+export MAIL_LOG_CUR

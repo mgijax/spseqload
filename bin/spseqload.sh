@@ -95,7 +95,7 @@ then
 fi
 
 #
-# Source the SwissProt Load configuration files
+# Source the SwissProt Load configuration files - order is important
 #
 . ${CONFIG_LOAD}
 . ${CONFIG_SPCOMMON}
@@ -105,6 +105,7 @@ fi
 #
 CONFIG_MASTER=${MGICONFIG}/master.config.sh
 
+# reality check for important configuration vars
 echo "javaruntime:${JAVARUNTIMEOPTS}"
 echo "classpath:${CLASSPATH}"
 echo "dbserver:${MGD_DBSERVER}"

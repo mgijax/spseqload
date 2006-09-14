@@ -1,10 +1,9 @@
-TAG: spseqload-3-1-0-3
-DATE: 02/09/2005
+TAG: spseqload-3-5-1-1
+DATE: 09/14/2006
 STAFF: sc
-RELEASE: prod
-CHANGES: TR6473
-1) Install.README - corrected example so it can be cut and
-   paste by installer
+RELEASE: 
+CHANGES: TR7894
+1)  updated to use mgiconfig
 
 TAG: spseqload-3-1-0-2
 DATE: 01/25/2005

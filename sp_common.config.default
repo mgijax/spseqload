@@ -40,7 +40,7 @@ export INSTALLDIR
 # allow 2G initial and max heap memory
 JAVARUNTIMEOPTS="-Xms2G -Xmx2G"    
 
-JAVA_LIB=${{MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
+JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
 CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 

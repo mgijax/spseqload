@@ -1,7 +1,4 @@
-#!/bin/sh
-#
-#  $Header
-#  $Name
+#!/bin/sh -x
 #
 #  spseqload.sh
 ###########################################################################
@@ -74,9 +71,7 @@ fi
 #  Establish the configuration file names.
 #
 CONFIG_LOAD=`pwd`/$1
-CONFIG_SPCOMMON=`pwd`/sp_common.config
-
-echo ${CONFIG_LOAD}
+CONFIG_LOAD_COMMON=`pwd`/sp_common.config
 
 #
 #  Make sure the configuration files are readable.
@@ -88,22 +83,27 @@ then
     exit 1
 fi
 
-if [ ! -r ${CONFIG_SPCOMMON} ]
+if [ ! -r ${CONFIG_LOAD_COMMON} ]
 then
-    echo "Cannot read configuration file: ${CONFIG_SPCOMMON}" | tee -a ${LOG}
+    echo "Cannot read configuration file: ${CONFIG_LOAD_COMMON}" | tee -a ${LOG}
     exit 1
 fi
 
 #
 # Source the SwissProt Load configuration files - order is important
 #
+. ${CONFIG_LOAD_COMMON}
 . ${CONFIG_LOAD}
-. ${CONFIG_SPCOMMON}
 
 #
-#  Establish master configuration file name, we pass this to java
+#  Make sure the master configuration file is readable
 #
-CONFIG_MASTER=${MGICONFIG}/master.config.sh
+
+if [ ! -r ${CONFIG_MASTER} ]
+then
+    echo "Cannot read configuration file: ${CONFIG_MASTER}"
+    exit 1
+fi
 
 # reality check for important configuration vars
 echo "javaruntime:${JAVARUNTIMEOPTS}"
@@ -128,25 +128,7 @@ else
 fi
 
 #
-#  Function that performs cleanup tasks for the job stream prior to
-#  termination.
-#
-shutDown ()
-{
-    #
-    # report location of logs
-    #
-    echo "\nSee logs at ${LOGDIR}\n" >> ${LOG_PROC}
-
-    #
-    # call DLA library function
-    #
-    postload
-
-}
-
-#
-# Function that runs to java load
+# Function that runs the java load
 #
 
 run ()
@@ -154,31 +136,26 @@ run ()
     #
     # log time and input files to process
     #
-    echo "\n`date`" >> ${LOG_PROC}
+    echo "\n`date`" >> ${LOG_DIAG} ${LOG_PROC}
     echo "Files from stdin: ${APP_CAT_METHOD} ${APP_INFILES}" | tee -a ${LOG_DIAG} ${LOG_PROC}
+
     #
     # run spseqload
     #
     ${APP_CAT_METHOD}  ${APP_INFILES}  | \
 	${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
-	-DCONFIG=${CONFIG_MASTER},${CONFIG_LOAD},${CONFIG_SPCOMMON} \
+	-DCONFIG=${CONFIG_MASTER},${CONFIG_LOAD_COMMON},${CONFIG_LOAD} \
 	-DJOBKEY=${JOBKEY} ${DLA_START}
-
     STAT=$?
-    if [ ${STAT} -ne 0 ]
-    then
-	echo "spseqload processing failed.  \
-	    Return status: ${STAT}" >> ${LOG_PROC}
-	shutDown
-	exit 1
-    fi
-    echo "spseqload completed successfully" >> ${LOG_PROC}
-
-
+    checkStatus ${STAT} ${SPSEQLOAD} ${CONFIG_LOAD}
 }
 
 ##################################################################
+##################################################################
+#
 # main
+#
+##################################################################
 ##################################################################
 
 #
@@ -196,24 +173,19 @@ cleanDir ${OUTPUTDIR} ${RPTDIR}
 # get input files
 #
 # Check to see if we're getting files from RADAR
-echo "APP_RADAR_INPUT=${APP_RADAR_INPUT}"
 if [  ${APP_RADAR_INPUT} = true ]
 then
     APP_INFILES=`${RADAR_DBUTILS}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
     STAT=$?
-    if [ ${STAT} -ne 0 ]
-    then
-	echo "getFilesToProcess.csh failed.  \
-	    Return status: ${STAT}" >> ${LOG_PROC}
-	shutDown
-	exit 1
-    fi
+    echo "STAT from getFilesToProcess is ${STAT}"
+    checkStatus ${STAT} "getFilesToProcess.csh failed"
+
     if [ "${APP_INFILES}" = "" ]
     then
 	echo "No files to process" | tee -a ${LOG_DIAG} ${LOG_PROC}
-    shutDown
-    exit 0
+	shutDown
+	exit 0
     fi
 fi
 
@@ -222,9 +194,7 @@ if [ "${APP_INFILES}" = "" ]
 then
      # set STAT for endJobStream.py called from postload in shutDown
     STAT=1
-    echo "APP_RADAR_INPUT=false. Check that APP_INFILES has been configured. Return status: ${STAT}" | tee -a ${LOG_DIAG}
-    shutDown
-    exit 0
+    checkStatus ${STAT} "APP_RADAR_INPUT=${APP_RADAR_INPUT}. Check that APP_INFILES has been configured"
 fi
 
 #
@@ -235,58 +205,37 @@ run
 #
 # log the processed files
 #
-if [  ${APP_RADAR_INPUT} = true ]
-then
-
-    echo "Logging processed files ${APP_INFILES}" | tee -a ${LOG_DIAG}
-    for file in ${APP_INFILES}
-    do
-	${RADAR_DBUTILS}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
-	    ${JOBKEY} ${file}  ${SEQ_PROVIDER}
-	STAT=$?
-	if [ ${STAT} -ne 0 ]
-	then
-	    echo "logProcessedFile.csh failed.  \
-		Return status: ${STAT}" >> ${LOG_PROC}
-	    shutDown
-	    exit 1
-	fi
-
-    done
-    echo 'Done logging processed files' | tee -a ${LOG_DIAG}
-fi
+echo "Logging processed files ${APP_INFILES}" >> ${LOG_DIAG}
+for file in ${APP_INFILES}
+do
+    ${RADAR_DBUTILS}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
+	${JOBKEY} ${file}  ${SEQ_PROVIDER}
+    STAT=$?
+    checkStatus ${STAT} "logProcessedFile.csh failed"
+done
+echo 'Done logging processed files' >> ${LOG_DIAG}
 
 #
 # run msp qc reports
 #
 
-echo 'Running MSP QC reports' | tee -a ${LOG_DIAG}
+echo 'Running MSP QC reports' >> ${LOG_DIAG}
 echo "\n`date`" >> ${LOG_DIAG}
 
 ${APP_MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Running MSP QC reports failed.  Return status: ${STAT}" >> ${LOG_PROC}
-    shutDown
-    exit 1
-fi
+checkStatus ${STAT} ${APP_MSP_QCRPT}
 
 #
 # run seqload qc reports
 #
 
-echo 'Running Sequence QC reports' | tee -a ${LOG_DIAG}
+echo 'Running Sequence QC reports' >> ${LOG_DIAG}
 echo "\n`date`" >> ${LOG_DIAG}
 
 ${APP_SEQ_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Running seqloader QC reports failed.  Return status: ${STAT}" >> ${LOG_PROC}
-    shutDown
-    exit 1
-fi
+checkStatus ${STAT} ${APP_SEQ_QCRPT}
 
 #
 # run postload cleanup and email logs
@@ -294,28 +243,3 @@ fi
 shutDown
 
 exit 0
-
-$Log
-
-###########################################################################
-#
-# Warranty Disclaimer and Copyright Notice
-#
-#  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
-#  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
-#  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
-#  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
-#  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
-#  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
-#
-#  This software and data are provided to enhance knowledge and encourage
-#  progress in the scientific community and are to be used only for research
-#  and educational purposes.  Any reproduction or use for commercial purpose
-#  is prohibited without the prior express written permission of The Jackson
-#  Laboratory.
-#
-# Copyright \251 1996, 1999, 2002, 2003 by The Jackson Laboratory
-#
-# All Rights Reserved
-#
-###########################################################################

@@ -8,13 +8,33 @@
 ###########################################################################
 
 # this dir holds the following dirs: logs, data, archive, reports
-FILEDIR=/data/loads/swissprot/trseqload
+FILEDIR=${DATALOADSOUTPUT}/swissprot/trseqload
+
+export FILEDIR
+
+# Full path the the logs, reports, and archive directories
+LOGDIR=${FILEDIR}/logs
+RPTDIR=${FILEDIR}/reports
+OUTPUTDIR=${FILEDIR}/output
+ARCHIVEDIR=${FILEDIR}/archive
+
+export LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR
+
+#  Complete path name of the log files
+LOG_PROC=${LOGDIR}/trseqload.proc.log
+LOG_DIAG=${LOGDIR}/trseqload.diag.log
+LOG_CUR=${LOGDIR}/trseqload.cur.log
+LOG_VAL=${LOGDIR}/trseqload.val.log
+
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL
 
 # Input file directory - used with APP_INFILES to process adhoc input
-INPUTDIR=/data/downloads/grendel.jax.org/sptrnrdb/trembl
+INPUTDIR=${DATADOWNLOADS}/grendel.jax.org/sptrnrdb/trembl
 
 # list of files to pipe to application when APP_RADAR_INPUT=false
 APP_INFILES=${INPUTDIR}/uniprot_trembl.dat.gz
+
+export INPUTDIR APP_INFILES
 
 # true if get input files from RADAR
 APP_RADAR_INPUT=true
@@ -34,6 +54,6 @@ SEQ_LOGICALDB=TrEMBL
 #  The name of the load for the subject of an email notification
 MAIL_LOADNAME="TrEMBL Load"
 
-export FILEDIR INPUTDIR APP_INFILES APP_RADAR_INPUT SEQ_QUALITY
+export APP_RADAR_INPUT SEQ_QUALITY
 export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB MAIL_LOADNAME
 

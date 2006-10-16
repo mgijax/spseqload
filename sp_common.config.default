@@ -5,8 +5,6 @@
 #  This file sets up environment variables that common to both
 #  SwissProt and TrEMBL Sequence loads
 # 
-#  IMPORTANT: This file is dependent on FILEDIR set in both spseqload.config
-#             or trseqload.config
 ###########################################################################
 #
 #  If the MGICONFIG environment variable does not have a local override,
@@ -18,18 +16,12 @@ then
     export MGICONFIG
 fi
 
-. ${MGICONFIG}/master.config.sh
+# establish name of master config and source it
+CONFIG_MASTER=${MGICONFIG}/master.config.sh
 
-###########################################################################
-#
-#  GENERAL SETTINGS
-#
-###########################################################################
+export CONFIG_MASTER
 
-#  Installation directory for the SwissProt sequence load
-INSTALLDIR=${DATALOAD}/spseqload
-
-export INSTALLDIR 
+. ${CONFIG_MASTER}
 
 ###########################################################################
 #
@@ -42,7 +34,7 @@ JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 
 JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
-CLASSPATH=.:${INSTALLDIR}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
+CLASSPATH=.:${SPSEQLOAD}/spseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
 export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 
@@ -51,19 +43,6 @@ export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 #  LOAD SPECIFIC SETTINGS
 #
 ###########################################################################
-
-#
-# output file settings
-#
-
-# Full path the the logs, reports, and archive directories
-# FILEDIR defined in specific config file
-LOGDIR=${FILEDIR}/logs
-RPTDIR=${FILEDIR}/reports
-OUTPUTDIR=${FILEDIR}/output
-ARCHIVEDIR=${FILEDIR}/archive
-
-export LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR 
 
 #
 # input file settings
@@ -100,7 +79,7 @@ export INFILE_END_DELIMITER INFILE_BUFFERSIZE
 # general settings
 #
 
- # Java applications
+# Java classes 
 DLA_LOADER=org.jax.mgi.app.spseqloader.SPSeqloader
 DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
 
@@ -156,12 +135,6 @@ SEQ_LOAD_HUMAN=false
 
 export SEQ_LOAD_MOUSE SEQ_LOAD_RAT SEQ_LOAD_HUMAN
 
-#  Complete path name of the log files
-LOG_PROC=${LOGDIR}/spseqload.proc.log
-LOG_DIAG=${LOGDIR}/spseqload.diag.log
-LOG_CUR=${LOGDIR}/spseqload.cur.log
-LOG_VAL=${LOGDIR}/spseqload.val.log
-
 # Send debug messages to the diagnostic log
 # toggle these to true as needed
 LOG_DEBUG=false
@@ -171,8 +144,7 @@ CACHE_DEBUG=false
 # logger factory class - allows classes to get their own loggers
 LOG_FACTORY=org.jax.mgi.shr.dla.log.DLALoggerFactory
 
-export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG DBDEBUG
-export CACHE_DEBUG LOG_FACTORY
+export LOG_DEBUG DBDEBUG CACHE_DEBUG LOG_FACTORY
 
 ###########################################################################
 #
@@ -253,6 +225,11 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 #  MISCELLANEOUS SETTINGS
 #
 ###########################################################################
+
+#  Installation directory for the SwissProt sequence load
+INSTALLDIR=${SPSEQLOAD}
+
+export INSTALLDIR
 
 #  Recipient list for mailing the curation log file (comma-separated)
 MAIL_LOG_CUR="sc"

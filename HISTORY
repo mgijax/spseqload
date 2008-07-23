@@ -1,3 +1,8 @@
+TAG: spseqload-4-1-1-1
+DATE: 07/23/2007
+STAFF: sc
+CHANGES: TR8092 - Removed reference to SeqRefAssocPair
+
 TAG: spseqload-3-5-1-7
 DATE: 11/09/2006
 STAFF: sc

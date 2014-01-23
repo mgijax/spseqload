@@ -1,3 +1,16 @@
+TAG: spseqload-5-1-7-1
+DATE: 01/23/2014
+STAFF: sc
+CHANGES: TR11573  - update to use seqdb_engine int file as input
+1. Install - create input directories for sp and tr
+2. sp_common.config.default - added BLASTDIR, UNIPROTDIR, 
+    FILENAME, READ_LOCK, UNLOCK, MIRROR_LOCK and updated APP_CAT_METHOD
+3. spseqload.config.default/trseqload.configl.default - 
+   change INPUTDIR, add LOCKNAME, rename APP_INFILES to APP_INFILE, 
+   remove APP_RADAR_INPUT
+4. spseqload.sh - remove checking RADAR for input files, add checking
+   input dir lastrun file and creating inputdir read lock
+
 TAG: spseqload-4-1-2-1
 DATE: 10/21/2008
 STAFF: sc

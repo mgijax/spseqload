@@ -15,6 +15,7 @@ export FILEDIR
 # Full path the the logs, reports, and archive directories
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
+INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output
 ARCHIVEDIR=${FILEDIR}/archive
 
@@ -28,16 +29,13 @@ LOG_VAL=${LOGDIR}/spseqload.val.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL
 
-# Input file directory - used with APP_INFILES to process adhoc input
-INPUTDIR=${DATADOWNLOADS}/grendel.jax.org/sptrnrdb/swissprot
+# lockfile name for the input directory
+LOCKNAME=spseqload
 
-# list of files to pipe to application when APP_RADAR_INPUT=false
-APP_INFILES=${INPUTDIR}/uniprot_sprot.dat.gz
+# list of files to pipe to application
+APP_INFILE=${INPUTDIR}/$FILENAME
 
-export INPUTDIR APP_INFILES
-
-# true if get input files from RADAR
-APP_RADAR_INPUT=true
+export LOCKNAME APP_INFILE
 
 # SwissProt sequence quality
 SEQ_QUALITY=High
@@ -54,6 +52,5 @@ SEQ_LOGICALDB=SWISS-PROT
 #  The name of the load for the subject of an email notification
 MAIL_LOADNAME="SwissProt Load"
 
-export APP_RADAR_INPUT SEQ_QUALITY
-export JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB MAIL_LOADNAME
+export SEQ_QUALITY JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB MAIL_LOADNAME
 

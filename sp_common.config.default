@@ -48,12 +48,23 @@ export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 # input file settings
 #
 
+BLASTDIR=/data/seqdbs/blast
+UNIPROTDIR=${BLASTDIR}/uniprot.build
+FILENAME=uniprotmus.dat
+READ_LOCK=rlock
+UNLOCK=unlock
+
+export BLASTDIR UNIPROTDIR FILENAME READ_LOCK UNLOCK
+
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
 #  the application.
 INFILE_NAME=STDIN
 
+# executable to set and remove lock files
+MIRROR_LOCK=${MIRROR_FTP}/mirror_lock
+
 # how files are piped to the application
-APP_CAT_METHOD="/usr/local/bin/gunzip -c"
+APP_CAT_METHOD=/usr/local/bin/cat
 
 # true = regex matching for finding record delim is turned on
 INFILE_USE_REGEX=true

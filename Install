@@ -39,16 +39,6 @@ SP_CONFIG=spseqload.config
 TR_CONFIG=trseqload.config 
 COMMON_CONFIG=sp_common.config
 
-# Make sure spseqload.config file exists and source it
-if [ -r ${SP_CONFIG} ]
-then
-    echo "Source ${SP_CONFIG}"
-    . ${SP_CONFIG}
-else
-    echo "Cannot source configuration file: ${SP_CONFIG}"
-    installFailed
-fi
-
 # Make sure sp_common.config file exists and source it
 if [ -r ${COMMON_CONFIG} ]
 then
@@ -56,6 +46,16 @@ then
     . ${COMMON_CONFIG}
 else
     echo "Cannot source configuration file: ${COMMON_CONFIG}"
+    installFailed
+fi
+
+# Make sure spseqload.config file exists and source it
+if [ -r ${SP_CONFIG} ]
+then
+    echo "Source ${SP_CONFIG}"
+    . ${SP_CONFIG}
+else
+    echo "Cannot source configuration file: ${SP_CONFIG}"
     installFailed
 fi
 
@@ -74,6 +74,19 @@ fi
 echo 'running DLAINSTALL'
 ${DLAINSTALL} ${DEV}
 
+#
+# Create the input directory if it doesn't exist.
+#
+if [ ! -d ${INPUTDIR} ]
+then
+    mkdir -p ${INPUTDIR}
+fi
+
+#
+# Create symbolic link to input file from INPUTDIR
+#
+ln -s  ${UNIPROTDIR}/${FILENAME} ${APP_INFILE}
+
 # now do trseqload
 # Make sure trseqload.config file exists and source it
 if [ -r ${TR_CONFIG} ]
@@ -87,6 +100,19 @@ fi
 
 # source sp_common.config again
 . ${COMMON_CONFIG}
+
+#
+# Create the input directory if it doesn't exist.
+#
+if [ ! -d ${INPUTDIR} ]
+then
+    mkdir -p ${INPUTDIR}
+fi
+
+#
+# Create symbolic link to input file from INPUTDIR
+#
+ln -s  ${UNIPROTDIR}/${FILENAME} ${APP_INFILE}
 
 #
 # run DLAInstall for trseqload

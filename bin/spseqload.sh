@@ -105,12 +105,6 @@ then
     exit 1
 fi
 
-# reality check for important configuration vars
-echo "javaruntime:${JAVARUNTIMEOPTS}"
-echo "classpath:${CLASSPATH}"
-echo "dbserver:${MGD_DBSERVER}"
-echo "database:${MGD_DBNAME}"
-
 #
 #  Source the DLA library functions.
 #
@@ -137,12 +131,12 @@ run ()
     # log time and input files to process
     #
     echo "\n`date`" >> ${LOG_DIAG} ${LOG_PROC}
-    echo "Files from stdin: ${APP_CAT_METHOD} ${APP_INFILES}" | tee -a ${LOG_DIAG} ${LOG_PROC}
+    echo "File from stdin: ${APP_CAT_METHOD} ${APP_INFILE}" >> ${LOG_DIAG} ${LOG_PROC}
 
     #
     # run spseqload
     #
-    ${APP_CAT_METHOD}  ${APP_INFILES}  | \
+    ${APP_CAT_METHOD}  ${APP_INFILE}  | \
 	${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
 	-DCONFIG=${CONFIG_MASTER},${CONFIG_LOAD_COMMON},${CONFIG_LOAD} \
 	-DJOBKEY=${JOBKEY} ${DLA_START}
@@ -169,32 +163,44 @@ preload ${OUTPUTDIR}
 #
 cleanDir ${OUTPUTDIR} ${RPTDIR}
 
-#
-# get input files
-#
-# Check to see if we're getting files from RADAR
-if [  ${APP_RADAR_INPUT} = true ]
-then
-    APP_INFILES=`${RADAR_DBUTILS}/bin/getFilesToProcess.csh \
-        ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER}`
-    STAT=$?
-    echo "STAT from getFilesToProcess is ${STAT}"
-    checkStatus ${STAT} "getFilesToProcess.csh"
-
-    if [ "${APP_INFILES}" = "" ]
-    then
-	echo "No files to process" | tee -a ${LOG_DIAG} ${LOG_PROC}
-	shutDown
-	exit 0
-    fi
-fi
-
-# if input file from Configuration check that APP_INFILES has been defined
-if [ "${APP_INFILES}" = "" ]
+# check that APP_INFILE has been defined
+if [ "${APP_INFILE}" = "" ]
 then
      # set STAT for endJobStream.py called from postload in shutDown
     STAT=1
-    checkStatus ${STAT} "APP_RADAR_INPUT=${APP_RADAR_INPUT}. Check that APP_INFILES has been configured"
+    checkStatus ${STAT} "Check that APP_INFILE has been configured"
+fi
+
+# Get read lock on the blast directory
+${MIRROR_LOCK} ${READ_LOCK} ${LOCKNAME} ${BLASTDIR}
+STAT=$?
+if [ $STAT -gt 0 ]
+then
+    checkStatus $STAT "There is a write lock on the input directory ${BLASTDIR}. ${SPSEQLOAD} exiting"
+fi
+
+#
+# There should be a "lastrun" file in the input directory that was created
+# the last time the load was run for this input file. If this file exists
+# and is more recent than the input file, the load does not need to be run.
+#
+LASTRUN_FILE=${INPUTDIR}/lastrun
+echo "LASTRUN_FILE: ${LASTRUN_FILE}"
+if [ -f ${LASTRUN_FILE} ]
+then
+    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${APP_INFILE}
+    then
+
+        echo "Input file has not been updated - skipping load" | tee -a ${LOG_PROC}
+	# unlock the input directory
+	${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${BLASTDIR}
+
+        # set STAT for shutdown
+        STAT=0
+        echo 'shutting down'
+        shutDown
+        exit 0
+    fi
 fi
 
 #
@@ -203,17 +209,27 @@ fi
 run
 
 #
-# log the processed files
+# unlock the input directory
 #
-echo "Logging processed files ${APP_INFILES}" >> ${LOG_DIAG}
-for file in ${APP_INFILES}
-do
-    ${RADAR_DBUTILS}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
-	${JOBKEY} ${file}  ${SEQ_PROVIDER}
-    STAT=$?
-    checkStatus ${STAT} "logProcessedFile.csh"
-done
-echo 'Done logging processed files' >> ${LOG_DIAG}
+${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${BLASTDIR} 
+
+#
+# Archive a copy of the input file, adding a timestamp suffix.
+#
+echo "" >> ${LOG_DIAG}
+date >> ${LOG_DIAG}
+echo "Archive input file" >> ${LOG_DIAG}
+TIMESTAMP=`date '+%Y%m%d.%H%M'`
+ARC_FILE=`basename ${APP_INFILE}`.${TIMESTAMP}
+cp -p ${APP_INFILE} ${ARCHIVEDIR}/${ARC_FILE}
+
+#
+# Touch the "lastrun" file to note when the load was run.
+#
+if [ ${STAT} = 0 ]
+then
+    touch ${LASTRUN_FILE}
+fi
 
 #
 # run msp qc reports

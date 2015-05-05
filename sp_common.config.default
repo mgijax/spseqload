@@ -103,14 +103,8 @@ DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
 # e.g. prefixes DBSERVER, DBNAME, BCP_PATH, etc
 DLA_DB_PREFIX=MGD
 
-# seqloader QC report script
-APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
-
-# molecular source processor QC report script
-APP_MSP_QCRPT=${QCRPTS}/msp/runQC.csh
-
 export DLA_LOADER DLA_START DLA_LOAD_STREAM DLA_QC_STREAM
-export DLA_DB_PREFIX APP_SEQ_QCRPT APP_MSP_QCRPT
+export DLA_DB_PREFIX 
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial uses no event detections - add only

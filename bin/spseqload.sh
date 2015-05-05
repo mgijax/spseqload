@@ -233,30 +233,6 @@ then
 fi
 
 #
-# run msp qc reports
-#
-
-echo 'Running MSP QC reports' >> ${LOG_DIAG}
-echo "" >> ${LOG_DIAG}
-echo "`date`" >> ${LOG_DIAG}
-
-${APP_MSP_QCRPT} ${JOBKEY} ${RPTDIR}
-STAT=$?
-checkStatus ${STAT} ${APP_MSP_QCRPT}
-
-#
-# run seqload qc reports
-#
-
-echo 'Running Sequence QC reports' >> ${LOG_DIAG}
-echo "" >> ${LOG_DIAG}
-echo "`date`" >> ${LOG_DIAG}
-
-${APP_SEQ_QCRPT} ${JOBKEY} ${RPTDIR}
-STAT=$?
-checkStatus ${STAT} ${APP_SEQ_QCRPT}
-
-#
 # run postload cleanup and email logs
 #
 shutDown

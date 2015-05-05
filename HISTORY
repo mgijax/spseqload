@@ -1,3 +1,10 @@
+TAG: spseqload-5-2-1-1
+DATE: 05/05/2015
+STAFF: sc
+CHANGES:
+* sp_common.config.default - removed QC report config
+* spseqload.sh - removed calls to QC reports
+
 TAG: spseqload-5-1-7-1
 DATE: 01/23/2014
 STAFF: sc

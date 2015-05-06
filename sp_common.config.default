@@ -64,7 +64,7 @@ INFILE_NAME=STDIN
 MIRROR_LOCK=${MIRROR_FTP}/mirror_lock
 
 # how files are piped to the application
-APP_CAT_METHOD=/usr/local/bin/cat
+APP_CAT_METHOD=cat
 
 # true = regex matching for finding record delim is turned on
 INFILE_USE_REGEX=true

@@ -1,3 +1,8 @@
+TAG: spseqload-5-2-1-3
+STAFF: sc
+CHANGES:
+* spseqload.sh - removed full path the test (/usr/local/bin/test --> test)
+
 TAG: spseqload-5-2-1-2
 STAFF: sc
 CHANGES: 

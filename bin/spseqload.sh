@@ -189,7 +189,7 @@ LASTRUN_FILE=${INPUTDIR}/lastrun
 echo "LASTRUN_FILE: ${LASTRUN_FILE}"
 if [ -f ${LASTRUN_FILE} ]
 then
-    if test ${LASTRUN_FILE} -nt ${APP_INFILE}
+    if env test ${LASTRUN_FILE} -nt ${APP_INFILE}
     then
 
         echo "Input file has not been updated - skipping load" | tee -a ${LOG_PROC}

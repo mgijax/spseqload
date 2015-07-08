@@ -85,6 +85,7 @@ fi
 #
 # Create symbolic link to input file from INPUTDIR
 #
+rm -f ${APP_INFILE}
 ln -s  ${UNIPROTDIR}/${FILENAME} ${APP_INFILE}
 
 # now do trseqload
@@ -112,6 +113,7 @@ fi
 #
 # Create symbolic link to input file from INPUTDIR
 #
+rm -f ${APP_INFILE}
 ln -s  ${UNIPROTDIR}/${FILENAME} ${APP_INFILE}
 
 #

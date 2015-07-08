@@ -172,12 +172,12 @@ then
     checkStatus ${STAT} "Check that APP_INFILE has been configured"
 fi
 
-# Get read lock on the blast directory
-${MIRROR_LOCK} ${READ_LOCK} ${LOCKNAME} ${BLASTDIR}
+# Get read lock on the input directory
+${MIRROR_LOCK} ${READ_LOCK} ${LOCKNAME} ${UNIPROTDIR}
 STAT=$?
 if [ $STAT -gt 0 ]
 then
-    checkStatus $STAT "There is a write lock on the input directory ${BLASTDIR}. ${SPSEQLOAD} exiting"
+    checkStatus $STAT "There is a write lock on the input directory ${UNIPROTDIR}. ${SPSEQLOAD} exiting"
 fi
 
 #
@@ -194,7 +194,7 @@ then
 
         echo "Input file has not been updated - skipping load" | tee -a ${LOG_PROC}
 	# unlock the input directory
-	${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${BLASTDIR}
+	${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${UNIPROTDIR}
 
         # set STAT for shutdown
         STAT=0
@@ -212,7 +212,7 @@ run
 #
 # unlock the input directory
 #
-${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${BLASTDIR} 
+${MIRROR_LOCK} ${UNLOCK} ${LOCKNAME} ${UNIPROTDIR} 
 
 #
 # Archive a copy of the input file, adding a timestamp suffix.

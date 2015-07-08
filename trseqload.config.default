@@ -15,7 +15,7 @@ export FILEDIR
 # Full path the the logs, reports, and archive directories
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
-INPUTDIR=${FILEDIR}/INPUT
+INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output
 ARCHIVEDIR=${FILEDIR}/archive
 

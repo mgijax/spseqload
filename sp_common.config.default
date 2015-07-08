@@ -47,14 +47,12 @@ export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 #
 # input file settings
 #
-
-BLASTDIR=/data/seqdbs/blast
-UNIPROTDIR=${BLASTDIR}/uniprot.build
+UNIPROTDIR=${DATADOWNLOADS}/uniprot
 FILENAME=uniprotmus.dat
 READ_LOCK=rlock
 UNLOCK=unlock
 
-export BLASTDIR UNIPROTDIR FILENAME READ_LOCK UNLOCK
+export UNIPROTDIR FILENAME READ_LOCK UNLOCK
 
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
 #  the application.

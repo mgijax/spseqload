@@ -59,7 +59,7 @@ export UNIPROTDIR FILENAME READ_LOCK UNLOCK
 INFILE_NAME=STDIN
 
 # executable to set and remove lock files
-MIRROR_LOCK=${MIRROR_FTP}/mirror_lock
+MIRROR_LOCK=${MIRROR_WGET}/mirror_lock
 
 # how files are piped to the application
 APP_CAT_METHOD=cat

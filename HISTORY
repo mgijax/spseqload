@@ -1,3 +1,9 @@
+TAG: spseqload-6-0-0-3
+DATE: 08/25/2015
+STAFF: dbm
+CHANGES:
+1) bin/spseqload.sh: Use "test" instead of "env test"
+
 TAG: spseqload-6-0-0-2
 DATE: 07/27/2015
 STAFF: dbm

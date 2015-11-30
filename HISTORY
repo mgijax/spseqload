@@ -1,3 +1,9 @@
+TAG: spseqload-6-0-1-1
+DATE: 11/30/2015
+STAFF: dbm
+CHANGES: TR11904 & TR12199
+1) sp_common.config.default: Don't mail curator log to mgiadmin
+
 TAG: spseqload-6-0-0-3
 DATE: 08/25/2015
 STAFF: dbm

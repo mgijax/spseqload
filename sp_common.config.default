@@ -233,8 +233,3 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 INSTALLDIR=${SPSEQLOAD}
 
 export INSTALLDIR
-
-#  Recipient list for mailing the curation log file (comma-separated)
-MAIL_LOG_CUR="mgiadmin"
-
-export MAIL_LOG_CUR

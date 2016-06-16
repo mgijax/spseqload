@@ -1,0 +1,6 @@
+sp_common.config
+spseqload.config
+trseqload.config
+classes/
+javadocs/
+spseqload.jar

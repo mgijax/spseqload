@@ -212,8 +212,8 @@ run
 # update serialization on mgi_reference_assoc, seq_source_assoc
 cat - <<EOSQL | ${PG_DBUTILS}/bin/doisql.csh $0 | tee -a ${LOG_DIAG}
 
-select setval('mgi_reference_assoc_seq', (select max(_Assoc_key) + 1 from MGI_Reference_Assoc));
-select setval('seq_source_assoc_seq', (select max(_Assoc_key) + 1 from SEQ_Source_Assoc));
+select setval('mgi_reference_assoc_seq', (select max(_Assoc_key) from MGI_Reference_Assoc));
+select setval('seq_source_assoc_seq', (select max(_Assoc_key) from SEQ_Source_Assoc));
 
 EOSQL
 

@@ -214,6 +214,7 @@ cat - <<EOSQL | ${PG_DBUTILS}/bin/doisql.csh $0 | tee -a ${LOG_DIAG}
 
 select setval('mgi_reference_assoc_seq', (select max(_Assoc_key) from MGI_Reference_Assoc));
 select setval('seq_source_assoc_seq', (select max(_Assoc_key) from SEQ_Source_Assoc));
+select setval('prb_source_seq', (select max(_Source_key) from PRB_Source));
 
 EOSQL
 

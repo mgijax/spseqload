@@ -8,7 +8,7 @@
    -->
    <property environment="env"/>
    <property name="jar.name" value="spseqload"/>
-   <property name="classpath" value="${env.MGI_JAVALIB}/core.jar:${env.MGI_JAVALIB}/dbsmgd.jar:${env.MGI_JAVALIB}/dbsrdr.jar:${env.MGI_JAVALIB}/dla.jar:${env.JCONNECT}"/>
+   <property name="classpath" value="${env.MGI_JAVALIB}/core.jar:${env.MGI_JAVALIB}/dbsmgd.jar:${env.MGI_JAVALIB}/dbsrdr.jar:${env.MGI_JAVALIB}/dla.jar"/>
 
    <!-- Import the universal targets.
    -->

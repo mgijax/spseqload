@@ -1,3 +1,8 @@
+TAG: spseqload-6-0-22-1
+DATE: 11/15/2023
+STAFF: sc
+CHANGES: remove JCONNECT from build.xml (old sybase JDBC driver)
+
 TAG: spseqload-6-0-16-1
 DATE: 08/21/2020
 STAFF: sc
